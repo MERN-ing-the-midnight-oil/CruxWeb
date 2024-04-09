@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import level1 from "./levels/level1";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const GameBoard = () => {
 	const [guesses, setGuesses] = useState({});
+	const [selectedClues, setSelectedClues] = useState([]);
+
 	const cellRefs = useRef({});
 
 	useEffect(() => {
@@ -47,31 +51,60 @@ const GameBoard = () => {
 			return `${y + 1}-${x}`;
 		}
 	};
+	const handleClueIconClick = (clues) => {
+		// This assumes clues are passed in directly as the array of paths from the clicked intersection
+		setSelectedClues(clues);
+	};
 
 	const renderGrid = () => {
 		const grid = [];
-		// Dynamically calculate grid size if necessary, for now assume fixed size
 		for (let y = 1; y <= 10; y++) {
-			// Adjust grid size as needed
 			const row = [];
 			for (let x = 1; x <= 10; x++) {
-				// Adjust grid size as needed
 				const key = `${y}-${x}`;
 				const cell = guesses[key];
-				const isCorrect = cell?.guess && cell.guess === cell.letter;
+				const isIntersection = level1.intersections.some(
+					(intersection) =>
+						intersection.position.x + 1 === x &&
+						intersection.position.y + 1 === y
+				);
+
+				// Determine if the current guess is correct
+				const isCorrectGuess = cell && cell.guess === cell.letter;
+
 				row.push(
-					<input
+					<div
 						key={key}
-						ref={cellRefs.current[key]}
-						type="text"
-						className={`grid-cell ${cell ? "" : "unused-cell"} ${
-							isCorrect ? "correct-guess" : ""
-						}`}
-						value={cell?.guess || ""}
-						onChange={(e) => handleInputChange(e, key)}
-						maxLength="1"
-						disabled={!cell}
-					/>
+						className={`grid-cell ${isIntersection ? "intersection" : ""} ${
+							isCorrectGuess ? "correct-guess" : ""
+						}`}>
+						{isIntersection && (
+							<button
+								className="clue-icon"
+								onClick={() =>
+									handleClueIconClick(
+										level1.intersections.find(
+											(intersection) =>
+												intersection.position.x + 1 === x &&
+												intersection.position.y + 1 === y
+										).clues
+									)
+								}
+								style={{ position: "absolute", zIndex: 2 }}>
+								<FontAwesomeIcon icon={faSearch} />
+							</button>
+						)}
+						<input
+							ref={cellRefs.current[key]}
+							type="text"
+							className={`input ${cell ? "" : "unused-cell"}`}
+							value={cell?.guess || ""}
+							onChange={(e) => handleInputChange(e, key)}
+							maxLength="1"
+							disabled={!cell}
+							style={{ zIndex: 1 }}
+						/>
+					</div>
 				);
 			}
 			grid.push(
@@ -84,8 +117,20 @@ const GameBoard = () => {
 		}
 		return grid;
 	};
-
-	return <div className="game-board">{renderGrid()}</div>;
+	return (
+		<div className="game-container">
+			<div className="game-board">{renderGrid()}</div>
+			<div className="clue-display-area">
+				{selectedClues.map((clue, index) => (
+					<img
+						key={index}
+						src={clue}
+						alt={`Clue ${index + 1}`}
+					/>
+				))}
+			</div>
+		</div>
+	);
 };
 
 export default GameBoard;
