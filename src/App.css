@@ -116,6 +116,23 @@
   }
 }
 
+.app-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.app-title {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+.app-instructions {
+  margin-bottom: 2em;
+  font-size: 1em;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /* Base styles for clue images */
 .clue-display-area img {
