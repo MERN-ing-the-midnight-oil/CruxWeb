@@ -1,62 +1,73 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import level1 from "./levels/level1";
 
 const GameBoard = () => {
 	const [guesses, setGuesses] = useState({});
+	const cellRefs = useRef({});
 
 	useEffect(() => {
 		const initialGuesses = {};
-		// Pre-fill the correct answers in the state for comparison (hidden from user initially)
 		level1.words.forEach(({ word, start, direction }) => {
-			let [x, y] = [start.x + 1, start.y + 1]; // Adjusted for margin
-			for (let char of word) {
+			let [x, y] = [start.x + 1, start.y + 1]; // Adjusted for initial margin
+			for (let i = 0; i < word.length; i++) {
 				const key = `${y}-${x}`;
-				initialGuesses[key] = { answer: char.toUpperCase(), guess: "" }; // Store both the correct answer and user guess
+				initialGuesses[key] = {
+					letter: word[i].toUpperCase(),
+					guess: "",
+					direction,
+				}; // Include direction
+				cellRefs.current[key] = React.createRef(); // Initialize refs for each cell
 				direction === "across" ? x++ : y++;
 			}
 		});
 		setGuesses(initialGuesses);
 	}, []);
 
-	// Handle input change by updating the guesses state with the user's input
-	const handleInputChange = (e, key) => {
-		const newGuess = e.target.value.slice(-1).toUpperCase(); // Ensure uppercase for consistency
+	const handleInputChange = (e, currentKey) => {
+		const newGuess = e.target.value.slice(-1).toUpperCase();
 		setGuesses((prevGuesses) => ({
 			...prevGuesses,
-			[key]: { ...prevGuesses[key], guess: newGuess }, // Update only the guess part
+			[currentKey]: { ...prevGuesses[currentKey], guess: newGuess },
 		}));
+
+		// Focus the next cell
+		const direction = guesses[currentKey]?.direction; // Use optional chaining for safety
+		const nextKey = getNextCellKey(currentKey, direction);
+		if (nextKey && cellRefs.current[nextKey]) {
+			cellRefs.current[nextKey].current.focus();
+		}
 	};
 
-	// Render the game board dynamically based on the level configuration
+	const getNextCellKey = (currentKey, direction) => {
+		const [y, x] = currentKey.split("-").map(Number);
+		if (direction === "across") {
+			return `${y}-${x + 1}`;
+		} else {
+			// 'down'
+			return `${y + 1}-${x}`;
+		}
+	};
+
 	const renderGrid = () => {
-		let maxX = 0,
-			maxY = 0;
-
-		// Determine the grid size dynamically
-		Object.keys(guesses).forEach((key) => {
-			const [y, x] = key.split("-").map(Number);
-			maxX = Math.max(maxX, x);
-			maxY = Math.max(maxY, y);
-		});
-
 		const grid = [];
-
-		for (let y = 1; y <= maxY; y++) {
+		// Dynamically calculate grid size if necessary, for now assume fixed size
+		for (let y = 1; y <= 10; y++) {
+			// Adjust grid size as needed
 			const row = [];
-			for (let x = 1; x <= maxX; x++) {
+			for (let x = 1; x <= 10; x++) {
+				// Adjust grid size as needed
 				const key = `${y}-${x}`;
 				const cell = guesses[key];
-				const isCorrectGuess = cell && cell.guess === cell.answer;
-				const cellClass = `grid-cell ${
-					cell ? (isCorrectGuess ? "correct-guess" : "word-cell") : "empty-cell"
-				}`;
-
+				const isCorrect = cell?.guess && cell.guess === cell.letter;
 				row.push(
 					<input
 						key={key}
+						ref={cellRefs.current[key]}
 						type="text"
-						className={cellClass}
-						value={cell ? cell.guess : ""}
+						className={`grid-cell ${cell ? "" : "unused-cell"} ${
+							isCorrect ? "correct-guess" : ""
+						}`}
+						value={cell?.guess || ""}
 						onChange={(e) => handleInputChange(e, key)}
 						maxLength="1"
 						disabled={!cell}
@@ -65,13 +76,12 @@ const GameBoard = () => {
 			}
 			grid.push(
 				<div
-					key={y}
+					key={`row-${y}`}
 					className="grid-row">
 					{row}
 				</div>
 			);
 		}
-
 		return grid;
 	};
 

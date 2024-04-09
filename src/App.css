@@ -1,3 +1,8 @@
+.unused-cell {
+  background-color: darkgrey;
+}
+
+
 .correct-guess {
   background-color: lightgreen; /* Light green background for correct guesses */
 }
@@ -6,9 +11,7 @@
   /* Styles for cells that are part of a word but not correctly guessed yet */
 }
 
-.empty-cell {
-  background-color: darkgrey; /* Dark grey background for empty cells */
-}
+
 .game-board {
   display: flex;
   flex-direction: column;
