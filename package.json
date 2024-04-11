@@ -2,7 +2,8 @@
   "name": "crux",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://MERN-ing-the-midnight-oil.github.io/crux",
+   "homepage": "https://MERN-ing-the-midnight-oil.github.io/crux",
+
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",

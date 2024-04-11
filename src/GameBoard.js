@@ -55,7 +55,7 @@ const GameBoard = () => {
 		}
 	};
 	const handleClueIconClick = (clues) => {
-		// This assumes clues are passed in directly as the array of paths from the clicked intersection
+		console.log("Clues:", clues); // Check what clues are actually passed
 		setSelectedClues(clues);
 	};
 
@@ -72,6 +72,17 @@ const GameBoard = () => {
 						intersection.position.x + 1 === x &&
 						intersection.position.y + 1 === y
 				);
+
+				if (isIntersection) {
+					const intersectionDetails = currentLevel.intersections.find(
+						(intersection) =>
+							intersection.position.x + 1 === x &&
+							intersection.position.y + 1 === y
+					);
+					if (intersectionDetails) {
+						console.log("Intersection details:", intersectionDetails);
+					}
+				}
 
 				const isCorrectGuess = cell && cell.guess === cell.letter;
 

@@ -19,3 +19,5 @@ function App() {
 }
 
 export default App;
+
+// "homepage": "https://MERN-ing-the-midnight-oil.github.io/crux",
