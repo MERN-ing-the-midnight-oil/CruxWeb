@@ -10,7 +10,8 @@ function App() {
 				Welcome to Crux! The crossword game with an dash of CodeNames. Click on
 				the magnifying glass icons on word intersections to see picture clues
 				that somehow pertain to both words. Type your solutions into the
-				squares. Good luck!
+				squares. Correct letters will turn the grid square from white to green.
+				Good luck!
 			</p>
 			<GameBoard />
 		</div>

@@ -1,121 +1,4 @@
-.grid-cell {
-  position: relative;
-}
-
-.game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center children horizontally in the container */
-  justify-content: center; /* Center children vertically in the container, if needed */
-}
-
-.clue-icon {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  /* Adjust size as needed */
-}
-.clue-display-area img {
-  max-width: 100%; /* Adjust the width as necessary */
-  max-height: 200px; /* Adjust the height as necessary */
-  object-fit: contain; /* This ensures the aspect ratio is preserved */
-}
-
-
-.input {
-  /* Ensure the input covers the cell but allows the icon to be clickable */
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-/* Add styles for .intersection, .unused-cell, etc., as needed */
-
-
-.unused-cell {
-  background-color: darkgrey;
-}
-
-
-
-.correct-guess .input {
-  background-color: lightgreen;
-}
-
-
-
-
-.game-board {
-  display: flex;
-  flex-direction: column;
-  font-family: Arial, sans-serif;
-  margin: 20px; 
-}
-
-.grid-row {
-  display: flex;
-}
-
-.grid-cell {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Existing styles for .game-board, .grid-row, and .grid-cell */
-
-.grid-cell.empty-cell {
-  background-color: darkgrey; /* Set the background color for empty cells */
-}
-
-
-
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+/* General App Styles */
 .app-container {
   text-align: center;
   padding: 20px;
@@ -134,35 +17,84 @@
   margin-right: auto;
 }
 
-/* Base styles for clue images */
+/* Game Board Styles */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center children horizontally in the container */
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.grid-row {
+  display: flex;
+}
+
+.grid-cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Input and Icon Styles */
+.input {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.clue-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Cell State Styles */
+.unused-cell {
+  background-color: darkgrey;
+}
+
+.correct-guess .input {
+  background-color: lightgreen;
+}
+
+/* Clue Display Area Styles */
 .clue-display-area img {
   max-width: 100%;
-  max-height: 200px; /* Adjust based on your default preference */
+  max-height: 200px;
   object-fit: contain;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) { /* For tablets and below */
-  .clue-display-area img {
-    max-height: 150px; /* Smaller height for smaller devices */
-  }
-}
-
-@media (max-width: 480px) { /* For mobile phones and below */
-  .clue-display-area img {
-    max-height: 100px; /* Even smaller height for very small devices */
-  }
-}
-
-/* Adjusting the game grid size or spacing similarly, if necessary */
+/* Responsive Design Adjustments */
 @media (max-width: 768px) {
-  .game-board {
-    /* Adjust grid styling for smaller screens, e.g., reduce margin, padding, or font size */
+  .clue-display-area img {
+    max-height: 150px;
   }
 }
 
 @media (max-width: 480px) {
-  .game-board {
-    /* Further adjustments for mobile phones */
+  .clue-display-area img {
+    max-height: 100px;
   }
+}
+.level-selection {
+  margin-bottom: 20px;
+}
+
+.level-selection button {
+  margin-right: 10px;
+  padding: 5px 10px;
 }
