@@ -1,70 +1,25 @@
-# Getting Started with Create React App
+# Crux & Clues Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to "Crux & Clues," a fun little React app I put together. It’s a twist on the traditional crossword puzzle- instead of textual clues, you get visual clues that pertain to more than one word (this should remind you of the game "CodeNames"!). Each intersection in the grid has a clickable magnifying glass icon. When you click it, it displays images that relate somehow to both of the intersecting words.
 
-## Available Scripts
+## Design
 
-In the project directory, you can run:
+### State Management
 
-### `npm start`
+The game leverages several key pieces of state:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Guesses**: This state tracks user inputs across the grid. Each cell's content is managed via a state object, where the keys correspond to cell positions and the values to what the user has typed in.
+- **Current Level**: I use a state to switch between different puzzles (`level1`, `level2`, etc.), with each level defined in separate files. This state influences the grid's dynamic rendering based on the selected level.
+- **Selected Clues**: When a user interacts with the magnifying glass icon, this state updates to reflect the clues associated with that particular intersection, which are then displayed in a clue area.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Design Patterns
 
-### `npm test`
+The app is structured around modern React functional components using hooks for state and effect management, ensuring components are both reusable and modular. Here’s how some key design patterns are employed:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Componentization**: The game board, each grid cell, and the clue display area are separate components, which simplifies the state management and makes the code more maintainable.
+- **Conditional Rendering**: This is used extensively to show or hide elements based on the game's state, such as displaying clues or indicating correct guesses.
+- **Effect Hook**: React's `useEffect` is crucial for initializing the game based on the level data and responding to level changes, ensuring that all components reflect the current game state.
 
-### `npm run build`
+This architecture not only supports easy maintenance but also facilitates scaling, whether adding new features or more complex levels.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Hope you have as much fun playing "Crux & Clues" as I had building it!
