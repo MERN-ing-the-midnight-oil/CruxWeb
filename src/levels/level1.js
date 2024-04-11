@@ -1,4 +1,5 @@
 // src/levels/level1.js
+const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Use an empty string as fallback
 
 const level1 = {
 	words: [
@@ -11,8 +12,8 @@ const level1 = {
 			// and the intersection is at (x: 3, y: 0) based on "ship" starting at (0,0) and "package" at (3,0).
 			position: { x: 3, y: 0 },
 			clues: [
-				"/images/level1/clue-ship-package-1.webp",
-				"/images/level1/clue-ship-package-2.webp",
+				baseUrl + "images/level1/clue-ship-package-1.webp",
+				baseUrl + "images/level1/clue-ship-package-2.webp",
 			],
 		},
 		// Additional intersections can be added here if your game expands

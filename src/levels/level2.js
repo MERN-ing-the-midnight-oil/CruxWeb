@@ -1,4 +1,5 @@
 // src/levels/level2.js
+const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Use an empty string as fallback
 
 const level2 = {
 	words: [
@@ -13,35 +14,35 @@ const level2 = {
 		{
 			position: { x: 0, y: 4 },
 			clues: [
-				"/images/level2/clue-chameleon-camouflage-1.webp",
+				baseUrl + "/images/level2/clue-chameleon-camouflage-1.webp",
 				// Additional clues for "Chameleon" and "Camouflage" intersection
 			],
 		},
 		{
 			position: { x: 5, y: 4 },
 			clues: [
-				"/images/level2/clue-chameleon-pallet-1.webp",
+				baseUrl + "/images/level2/clue-chameleon-pallet-1.webp",
 				// Additional clues for "Chameleon" and "Pallet" intersection
 			],
 		},
 		{
 			position: { x: 5, y: 6 },
 			clues: [
-				"/images/level2/clue-tree-pallet-1.webp",
+				baseUrl + "/images/level2/clue-tree-pallet-1.webp",
 				// Additional clues for "Tree" and "Pallet" intersection
 			],
 		},
 		{
 			position: { x: 6, y: 6 },
 			clues: [
-				"/images/level2/clue-tree-ruff-1.webp",
+				baseUrl + "/images/level2/clue-tree-ruff-1.webp",
 				// Additional clues for "Tree" and "Ruff" intersection
 			],
 		},
 		{
 			position: { x: 6, y: 8 },
 			clues: [
-				"/images/level2/clue-ruff-frill-1.webp",
+				baseUrl + "/images/level2/clue-ruff-frill-1.webp",
 				// Additional clues for "Ruff" and "Frill" intersection
 			],
 		},
