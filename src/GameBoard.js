@@ -11,6 +11,7 @@ const GameBoard = () => {
 	const [selectedClues, setSelectedClues] = useState([]);
 
 	const cellRefs = useRef({});
+	const [activeWordStart, setActiveWordStart] = useState(null);
 
 	useEffect(() => {
 		const initialGuesses = {};
@@ -37,23 +38,56 @@ const GameBoard = () => {
 			[currentKey]: { ...prevGuesses[currentKey], guess: newGuess },
 		}));
 
-		// Focus the next cell
-		const direction = guesses[currentKey]?.direction; // Use optional chaining for safety
+		const direction = guesses[currentKey]?.direction;
 		const nextKey = getNextCellKey(currentKey, direction);
-		if (nextKey && cellRefs.current[nextKey]) {
-			cellRefs.current[nextKey].current.focus();
+
+		// Only focus the next cell if it's part of the active word
+		if (nextKey && isActiveWordKey(nextKey)) {
+			cellRefs.current[nextKey]?.current?.focus();
 		}
+	};
+
+	// Add onFocus handler to set active word when user clicks into a cell
+	const handleFocus = (key) => {
+		if (!isActiveWordKey(key)) {
+			setActiveWordStart(key);
+		}
+	};
+
+	// Helper function to determine if a key is part of the active word
+	const isActiveWordKey = (key) => {
+		if (!activeWordStart) return false;
+		const [startY, startX] = activeWordStart.split("-").map(Number);
+		const [keyY, keyX] = key.split("-").map(Number);
+		const activeWord = guesses[activeWordStart];
+
+		if (
+			activeWord.direction === "across" &&
+			startY === keyY &&
+			keyX >= startX
+		) {
+			return true;
+		} else if (
+			activeWord.direction === "down" &&
+			startX === keyX &&
+			keyY >= startY
+		) {
+			return true;
+		}
+		return false;
 	};
 
 	const getNextCellKey = (currentKey, direction) => {
 		const [y, x] = currentKey.split("-").map(Number);
+
 		if (direction === "across") {
 			return `${y}-${x + 1}`;
 		} else {
-			// 'down'
+			// Assuming the only other direction is "down"
 			return `${y + 1}-${x}`;
 		}
 	};
+
 	const handleClueIconClick = (clues) => {
 		console.log("Clues:", clues); // Check what clues are actually passed
 		setSelectedClues(clues);
@@ -114,6 +148,7 @@ const GameBoard = () => {
 							className={`input ${cell ? "" : "unused-cell"}`}
 							value={cell?.guess || ""}
 							onChange={(e) => handleInputChange(e, key)}
+							onFocus={() => handleFocus(key)}
 							maxLength="1"
 							disabled={!cell}
 							style={{ zIndex: 1 }}
