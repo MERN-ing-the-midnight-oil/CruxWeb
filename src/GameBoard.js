@@ -3,6 +3,7 @@ import level1 from "./levels/level1";
 import level2 from "./levels/level2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import Confetti from "react-confetti";
 
 const GameBoard = () => {
 	const [currentLevel, setCurrentLevel] = useState(level1);
@@ -12,6 +13,23 @@ const GameBoard = () => {
 
 	const cellRefs = useRef({});
 	const [activeWordStart, setActiveWordStart] = useState(null);
+	const [levelComplete, setLevelComplete] = useState(false);
+
+	const calculateGridSize = (words) => {
+		let maxX = 0,
+			maxY = 0;
+		words.forEach(({ word, start, direction }) => {
+			if (direction === "across") {
+				maxX = Math.max(maxX, start.x + word.length);
+				maxY = Math.max(maxY, start.y + 1);
+			} else {
+				// direction "down"
+				maxX = Math.max(maxX, start.x + 1);
+				maxY = Math.max(maxY, start.y + word.length);
+			}
+		});
+		return { width: maxX, height: maxY };
+	};
 
 	useEffect(() => {
 		const initialGuesses = {};
@@ -33,6 +51,8 @@ const GameBoard = () => {
 
 	const handleInputChange = (e, currentKey) => {
 		const newGuess = e.target.value.slice(-1).toUpperCase();
+
+		// Update the guesses state
 		setGuesses((prevGuesses) => ({
 			...prevGuesses,
 			[currentKey]: { ...prevGuesses[currentKey], guess: newGuess },
@@ -44,6 +64,24 @@ const GameBoard = () => {
 		// Only focus the next cell if it's part of the active word
 		if (nextKey && isActiveWordKey(nextKey)) {
 			cellRefs.current[nextKey]?.current?.focus();
+		}
+	};
+
+	// useEffect to check level completion when guesses change
+	useEffect(() => {
+		checkLevelCompletion();
+	}, [guesses]); // Dependency array includes guesses to ensure the effect runs on update
+
+	// Function to check if the level is complete
+	const checkLevelCompletion = () => {
+		const allCorrect = Object.values(guesses).every(
+			(cell) => cell.guess === cell.letter && cell.guess !== ""
+		);
+		console.log("Checking level completion: ", allCorrect, guesses);
+		if (allCorrect) {
+			setLevelComplete(true);
+		} else {
+			setLevelComplete(false); // Explicitly set to false if not all are correct
 		}
 	};
 
@@ -94,10 +132,11 @@ const GameBoard = () => {
 	};
 
 	const renderGrid = () => {
+		const { width, height } = calculateGridSize(currentLevel.words);
 		const grid = [];
-		for (let y = 1; y <= 10; y++) {
+		for (let y = 1; y <= height; y++) {
 			const row = [];
-			for (let x = 1; x <= 10; x++) {
+			for (let x = 1; x <= width; x++) {
 				const key = `${y}-${x}`;
 				const cell = guesses[key];
 				// Dynamically check against currentLevel intersections
@@ -106,17 +145,6 @@ const GameBoard = () => {
 						intersection.position.x + 1 === x &&
 						intersection.position.y + 1 === y
 				);
-
-				if (isIntersection) {
-					const intersectionDetails = currentLevel.intersections.find(
-						(intersection) =>
-							intersection.position.x + 1 === x &&
-							intersection.position.y + 1 === y
-					);
-					if (intersectionDetails) {
-						console.log("Intersection details:", intersectionDetails);
-					}
-				}
 
 				const isCorrectGuess = cell && cell.guess === cell.letter;
 
@@ -167,21 +195,30 @@ const GameBoard = () => {
 		return grid;
 	};
 
+	const completeLevel = () => {
+		setLevelComplete(true);
+		// You might want to stop the confetti after a certain time
+		setTimeout(() => setLevelComplete(false), 3000); // stop after 3  seconds
+	};
 	return (
-		<div className="game-container">
-			<div className="level-selection">
-				<button onClick={() => setCurrentLevel(level1)}>Level 1</button>
-				<button onClick={() => setCurrentLevel(level2)}>Level 2</button>
-			</div>
-			<div className="game-board">{renderGrid()}</div>
-			<div className="clue-display-area">
-				{selectedClues.map((clue, index) => (
-					<img
-						key={index}
-						src={clue}
-						alt={`Clue ${index + 1}`}
-					/>
-				))}
+		<div>
+			{levelComplete && <Confetti recycle={false} />}
+
+			<div className="game-container">
+				<div className="level-selection">
+					<button onClick={() => setCurrentLevel(level1)}>Level 1</button>
+					<button onClick={() => setCurrentLevel(level2)}>Level 2</button>
+				</div>
+				<div className="game-board">{renderGrid()}</div>
+				<div className="clue-display-area">
+					{selectedClues.map((clue, index) => (
+						<img
+							key={index}
+							src={clue}
+							alt={`Clue ${index + 1}`}
+						/>
+					))}
+				</div>
 			</div>
 		</div>
 	);
