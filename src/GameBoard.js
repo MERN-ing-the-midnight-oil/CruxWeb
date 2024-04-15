@@ -206,8 +206,12 @@ const GameBoard = () => {
 
 			<div className="game-container">
 				<div className="level-selection">
-					<button onClick={() => setCurrentLevel(level1)}>Level 1</button>
-					<button onClick={() => setCurrentLevel(level2)}>Level 2</button>
+					<button onClick={() => setCurrentLevel(level1)}>
+						Level 1- "Clones"
+					</button>
+					<button onClick={() => setCurrentLevel(level2)}>
+						Level 2- "Slap Pals"
+					</button>
 				</div>
 				<div className="game-board">{renderGrid()}</div>
 				<div className="clue-display-area">
