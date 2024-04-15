@@ -28,21 +28,21 @@ const level2 = {
 		{
 			position: { x: 5, y: 6 },
 			clues: [
-				baseUrl + "/images/level2/clue-tree-pallet-1.webp",
+				baseUrl + "images/level2/clue-tree-pallet-1.webp",
 				// Additional clues for "Tree" and "Pallet" intersection
 			],
 		},
 		{
 			position: { x: 6, y: 6 },
 			clues: [
-				baseUrl + "/images/level2/clue-tree-ruff-1.webp",
+				baseUrl + "images/level2/clue-tree-ruff-1.webp",
 				// Additional clues for "Tree" and "Ruff" intersection
 			],
 		},
 		{
 			position: { x: 6, y: 8 },
 			clues: [
-				baseUrl + "/images/level2/clue-ruff-frill-1.webp",
+				baseUrl + "images/level2/clue-ruff-frill-1.webp",
 				// Additional clues for "Ruff" and "Frill" intersection
 			],
 		},

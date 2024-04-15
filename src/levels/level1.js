@@ -1,5 +1,6 @@
 // src/levels/level1.js
 const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Use an empty string as fallback
+console.log("Base URL:", baseUrl); // This should log an empty string during production according to my .env setting
 
 const level1 = {
 	words: [
