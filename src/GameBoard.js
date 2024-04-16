@@ -85,6 +85,7 @@ const GameBoard = () => {
 		console.log("Checking level completion: ", allCorrect, guesses);
 		if (allCorrect) {
 			setLevelComplete(true);
+			completeLevel(); // Trigger the completeLevel function when all guesses are correct
 		} else {
 			setLevelComplete(false); // Explicitly set to false if not all are correct
 		}
@@ -225,7 +226,7 @@ const GameBoard = () => {
 	const completeLevel = () => {
 		setLevelComplete(true);
 		// You might want to stop the confetti after a certain time
-		setTimeout(() => setLevelComplete(false), 3000); // stop after 3  seconds
+		setTimeout(() => setLevelComplete(false), 10000); // stop after 3  seconds
 	};
 	return (
 		<div>
@@ -236,9 +237,9 @@ const GameBoard = () => {
 					<button onClick={() => setCurrentLevel(level1)}>
 						Level 1- "Clones"
 					</button>
-					<button onClick={() => setCurrentLevel(level2)}>
+					{/* <button onClick={() => setCurrentLevel(level2)}>
 						Level 2- "Slap Pals"
-					</button>
+					</button> */}
 				</div>
 				<div className="game-board">{renderGrid()}</div>
 				<div className="clue-display-area">
