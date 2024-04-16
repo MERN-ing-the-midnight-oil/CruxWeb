@@ -76,5 +76,9 @@ const level1 = {
 		}, // Wormhole intersects Earthworm
 	],
 };
+console.log(
+	"Clue URLs:",
+	level1.intersections.map((i) => i.clues)
+);
 
 export default level1;

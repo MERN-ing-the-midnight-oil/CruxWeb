@@ -3,7 +3,6 @@ import level1 from "./levels/level1";
 import level2 from "./levels/level2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import ClueModal from "./ClueModal";
 import Confetti from "react-confetti";
 
 const GameBoard = () => {
@@ -31,10 +30,6 @@ const GameBoard = () => {
 		});
 		return { width: maxX, height: maxY };
 	};
-	const [modalOpen, setModalOpen] = useState(false);
-	const [modalContent, setModalContent] = useState(
-		"This is a clue for the game."
-	);
 
 	useEffect(() => {
 		const initialGuesses = {};
@@ -132,30 +127,8 @@ const GameBoard = () => {
 	};
 
 	const handleClueIconClick = (clues) => {
-		// Log the clues array received to check its initial state
-		console.log("Received clues:", clues);
-
-		// Map over the clues array to create image elements and log each URL
-		const images = clues.map((clue, index) => {
-			console.log(`Clue URL at index ${index}:`, clue); // Log each clue URL
-			return (
-				<img
-					key={index}
-					src={clue}
-					alt={`Clue ${index + 1}`}
-				/>
-			);
-		});
-
-		// Log the array of image elements to see if they were created correctly
-		console.log("Image elements created:", images);
-
-		// Set the modal content to the array of image elements
-		setModalContent(images);
-
-		// Open the modal
-		setModalOpen(true); // Log modal opening action
-		console.log("Modal opened with content.");
+		console.log("Clues:", clues); // Check what clues are actually passed
+		setSelectedClues(clues);
 	};
 
 	const renderGrid = () => {
@@ -236,9 +209,9 @@ const GameBoard = () => {
 					<button onClick={() => setCurrentLevel(level1)}>
 						Level 1- "Clones"
 					</button>
-					<button onClick={() => setCurrentLevel(level2)}>
-						Level 2- "Slap Pals"
-					</button>
+					{/* <button onClick={() => setCurrentLevel(level2)}>
+						Level 2- "SlapPals"
+					</button> */}
 				</div>
 				<div className="game-board">{renderGrid()}</div>
 				<div className="clue-display-area">
@@ -250,11 +223,6 @@ const GameBoard = () => {
 						/>
 					))}
 				</div>
-				<ClueModal
-					isOpen={modalOpen}
-					onClose={() => setModalOpen(false)}
-					content={modalContent}
-				/>
 			</div>
 		</div>
 	);
