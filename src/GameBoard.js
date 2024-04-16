@@ -132,31 +132,38 @@ const GameBoard = () => {
 		}
 	};
 
+	//using the modal
+	// const handleClueIconClick = (clues) => {
+	// 	// Log the clues array received to check its initial state
+	// 	console.log("Received clues:", clues);
+
+	// 	// Map over the clues array to create image elements and log each URL
+	// 	const images = clues.map((clue, index) => {
+	// 		console.log(`Clue URL at index ${index}:`, clue); // Log each clue URL
+	// 		return (
+	// 			<img
+	// 				key={index}
+	// 				src={clue}
+	// 				alt={`Clue ${index + 1}`}
+	// 			/>
+	// 		);
+	// 	});
+
+	// 	// Log the array of image elements to see if they were created correctly
+	// 	console.log("Image elements created:", images);
+
+	// 	// Set the modal content to the array of image elements
+	// 	setModalContent(images);
+
+	// 	// Open the modal
+	// 	setModalOpen(true); // Log modal opening action
+	// 	console.log("Modal opened with content.");
+	// };
+
+	//using the display clue area
 	const handleClueIconClick = (clues) => {
-		// Log the clues array received to check its initial state
-		console.log("Received clues:", clues);
-
-		// Map over the clues array to create image elements and log each URL
-		const images = clues.map((clue, index) => {
-			console.log(`Clue URL at index ${index}:`, clue); // Log each clue URL
-			return (
-				<img
-					key={index}
-					src={clue}
-					alt={`Clue ${index + 1}`}
-				/>
-			);
-		});
-
-		// Log the array of image elements to see if they were created correctly
-		console.log("Image elements created:", images);
-
-		// Set the modal content to the array of image elements
-		setModalContent(images);
-
-		// Open the modal
-		setModalOpen(true); // Log modal opening action
-		console.log("Modal opened with content.");
+		console.log("Received clues:", clues); // Log for debugging purposes
+		setSelectedClues(clues); // Update state to display clues
 	};
 
 	const renderGrid = () => {
@@ -232,30 +239,60 @@ const GameBoard = () => {
 		<div>
 			{levelComplete && <Confetti recycle={false} />}
 
-			<div className="game-container">
-				<div className="level-selection">
-					<button onClick={() => setCurrentLevel(level1)}>
-						Level 1- "Clones"
-					</button>
-					{/* <button onClick={() => setCurrentLevel(level2)}>
-						Level 2- "Slap Pals"
-					</button> */}
+			<div
+				className="game-container"
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "start",
+					width: "100%",
+					height: "100vh",
+				}}>
+				<div
+					className="game-board"
+					style={{
+						flexBasis: "50%",
+						flexGrow: 0,
+						flexShrink: 0,
+						margin: "10px",
+					}}>
+					{renderGrid()}
 				</div>
-				<div className="game-board">{renderGrid()}</div>
-				<div className="clue-display-area">
-					{selectedClues.map((clue, index) => (
-						<img
-							key={index}
-							src={clue}
-							alt={`Clue ${index + 1}`}
-						/>
-					))}
+				<div
+					className="clue-display-area"
+					style={{
+						flexGrow: 1,
+						flexBasis: "50%",
+						border: "1px solid black",
+						padding: "20px",
+						margin: "10px",
+						overflow: "auto",
+						height: "90vh",
+						maxWidth: "50vh",
+					}}>
+					{selectedClues.length > 0 ? (
+						selectedClues.map((clue, index) => (
+							<img
+								key={index}
+								src={clue}
+								alt={`Clue ${index + 1}`}
+								style={{ width: "100%", height: "auto", marginBottom: "10px" }}
+							/>
+						))
+					) : (
+						<p>No clues selected</p>
+					)}
 				</div>
-				<ClueModal
-					isOpen={modalOpen}
-					onClose={() => setModalOpen(false)}
-					content={modalContent}
-				/>
+			</div>
+
+			<div className="level-selection">
+				<button onClick={() => setCurrentLevel(level1)}>
+					Level 1- "Clones"
+				</button>
+				{/* Uncomment if enabling Level 2 */}
+				{/* <button onClick={() => setCurrentLevel(level2)}>
+					Level 2- "Slap Pals"
+				</button> */}
 			</div>
 		</div>
 	);
