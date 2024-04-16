@@ -6,6 +6,7 @@
 
 .app-title {
   font-size: 2em;
+  
   margin-bottom: 0.5em;
 }
 
@@ -20,16 +21,15 @@
 /* Game Board Styles */
 .game-container {
   display: flex;
-  flex-direction: row; /* Updated to row for side-by-side layout */
-  align-items: stretch; /* Ensure children fill the container height */
+  flex-direction: column;
+  align-items: center; /* Center children horizontally in the container */
 }
 
 .game-board {
   display: flex;
   flex-direction: column;
   font-family: Arial, sans-serif;
-  flex-grow: 1; /* Allows flexible growth to fit space */
-  margin: 10px;
+  margin: 20px;
 }
 
 .grid-row {
@@ -79,7 +79,8 @@
   padding: 20px;
   margin: 10px;
   overflow: auto;
-  align-self: stretch; /* Adjusts to match the parent's height */
+  height: 90vh; /* Adjust the height as needed */
+  width: 100%; /* This will make sure it utilizes the width given by flex-grow */
 }
 
 .clue-display-area img {
@@ -88,6 +89,7 @@
   object-fit: contain; /* Ensures the image fits within the bounds without stretching */
   margin-bottom: 10px; /* Adds space between images if there are multiple */
 }
+
 
 /* Responsive Design Adjustments */
 @media (max-width: 768px) {
@@ -101,7 +103,6 @@
     max-height: 100px;
   }
 }
-
 .level-selection {
   margin-bottom: 20px;
 }

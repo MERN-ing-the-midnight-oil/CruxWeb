@@ -238,7 +238,15 @@ const GameBoard = () => {
 	return (
 		<div>
 			{levelComplete && <Confetti recycle={false} />}
-
+			<div className="level-selection">
+				<button onClick={() => setCurrentLevel(level1)}>
+					Level 1- "Clones"
+				</button>
+				{/* Uncomment if enabling Level 2 */}
+				{/* <button onClick={() => setCurrentLevel(level2)}>
+					Level 2- "Slap Pals"
+				</button> */}
+			</div>
 			<div
 				className="game-container"
 				style={{
@@ -276,23 +284,18 @@ const GameBoard = () => {
 								key={index}
 								src={clue}
 								alt={`Clue ${index + 1}`}
-								style={{ width: "100%", height: "auto", marginBottom: "10px" }}
+								style={{
+									width: "100%",
+									height: "100%",
+									objectFit: "contain",
+									marginBottom: "10px",
+								}}
 							/>
 						))
 					) : (
 						<p>No clues selected</p>
 					)}
 				</div>
-			</div>
-
-			<div className="level-selection">
-				<button onClick={() => setCurrentLevel(level1)}>
-					Level 1- "Clones"
-				</button>
-				{/* Uncomment if enabling Level 2 */}
-				{/* <button onClick={() => setCurrentLevel(level2)}>
-					Level 2- "Slap Pals"
-				</button> */}
 			</div>
 		</div>
 	);
