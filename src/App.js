@@ -7,11 +7,11 @@ function App() {
 		<div className="app-container">
 			<h1 className="app-title">Crux</h1>
 			<p className="app-instructions">
-				Welcome to Crux! The crossword game with an dash of CodeNames. Click on
-				the magnifying glass icons on word intersections to see picture clues
-				that somehow pertain to both words. Type your solutions into the
-				squares. Correct letters will turn the grid square from white to green.
-				Good luck!
+				Welcome to Crux! The crossword game with a dash of Dixit and a sprinkle
+				of Mysterium. Click on the colored areas to see picture clues that
+				somehow pertain to all adjacent words. Type your solutions into the
+				white squares. Correct letters will turn the grid square from white to
+				green. Good luck!
 			</p>
 			<GameBoard />
 		</div>
@@ -19,5 +19,3 @@ function App() {
 }
 
 export default App;
-
-//put the following in package.json for production: "homepage": "https://MERN-ing-the-midnight-oil.github.io/crux",

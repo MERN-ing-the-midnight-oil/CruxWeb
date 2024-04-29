@@ -1,301 +1,203 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import ColorHash from "color-hash";
 import level1 from "./levels/level1";
 import level2 from "./levels/level2";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import ClueModal from "./ClueModal";
-import Confetti from "react-confetti";
 
+const colorHash = new ColorHash();
+const getClueColor = (clueUrl) => {
+	return colorHash.hex(clueUrl); // Returns a hex color based on the input string
+};
 const GameBoard = () => {
-	const [currentLevel, setCurrentLevel] = useState(level1);
-
+	const levels = { level1, level2 };
+	const [currentLevel, setCurrentLevel] = useState("level1");
 	const [guesses, setGuesses] = useState({});
-	const [selectedClues, setSelectedClues] = useState([]);
 
-	const cellRefs = useRef({});
-	const [activeWordStart, setActiveWordStart] = useState(null);
-	const [levelComplete, setLevelComplete] = useState(false);
-
-	const calculateGridSize = (words) => {
-		let maxX = 0,
-			maxY = 0;
-		words.forEach(({ word, start, direction }) => {
-			if (direction === "across") {
-				maxX = Math.max(maxX, start.x + word.length);
-				maxY = Math.max(maxY, start.y + 1);
-			} else {
-				// direction "down"
-				maxX = Math.max(maxX, start.x + 1);
-				maxY = Math.max(maxY, start.y + word.length);
-			}
-		});
-		return { width: maxX, height: maxY };
-	};
-	const [modalOpen, setModalOpen] = useState(false);
-	const [modalContent, setModalContent] = useState(
-		"This is a clue for the game."
-	);
-
+	// Load guesses from local storage when the component mounts or level changes
 	useEffect(() => {
-		const initialGuesses = {};
-		currentLevel.words.forEach(({ word, start, direction }) => {
-			let [x, y] = [start.x + 1, start.y + 1];
-			for (let i = 0; i < word.length; i++) {
-				const key = `${y}-${x}`;
-				initialGuesses[key] = {
-					letter: word[i].toUpperCase(),
-					guess: "",
-					direction,
-				};
-				cellRefs.current[key] = React.createRef();
-				direction === "across" ? x++ : y++;
-			}
-		});
-		setGuesses(initialGuesses);
+		const savedGuesses = localStorage.getItem(`guesses-${currentLevel}`);
+		if (savedGuesses) {
+			setGuesses(JSON.parse(savedGuesses));
+		} else {
+			setGuesses({});
+		}
 	}, [currentLevel]);
 
-	const handleInputChange = (e, currentKey) => {
-		const newGuess = e.target.value.slice(-1).toUpperCase();
-
-		// Update the guesses state
-		setGuesses((prevGuesses) => ({
-			...prevGuesses,
-			[currentKey]: { ...prevGuesses[currentKey], guess: newGuess },
-		}));
-
-		const direction = guesses[currentKey]?.direction;
-		const nextKey = getNextCellKey(currentKey, direction);
-
-		// Only focus the next cell if it's part of the active word
-		if (nextKey && isActiveWordKey(nextKey)) {
-			cellRefs.current[nextKey]?.current?.focus();
-		}
-	};
-
-	// useEffect to check level completion when guesses change
+	// Save guesses to local storage whenever they change
 	useEffect(() => {
-		checkLevelCompletion();
-	}, [guesses]); // Dependency array includes guesses to ensure the effect runs on update
+		const savedGuesses = JSON.stringify(guesses);
+		localStorage.setItem(`guesses-${currentLevel}`, savedGuesses);
+	}, [guesses, currentLevel]);
 
-	// Function to check if the level is complete
-	const checkLevelCompletion = () => {
-		const allCorrect = Object.values(guesses).every(
-			(cell) => cell.guess === cell.letter && cell.guess !== ""
-		);
-		console.log("Checking level completion: ", allCorrect, guesses);
-		if (allCorrect) {
-			setLevelComplete(true);
-			completeLevel(); // Trigger the completeLevel function when all guesses are correct
-		} else {
-			setLevelComplete(false); // Explicitly set to false if not all are correct
+	const [focusDirection, setFocusDirection] = useState("across"); // 'across' or 'down'
+	const inputRefs = useRef({});
+	const [currentClueUrl, setCurrentClueUrl] = useState("");
+
+	const handleLevelChange = (event) => {
+		setCurrentLevel(event.target.value);
+		setGuesses({});
+		inputRefs.current = {}; // Reset references on level change
+	};
+
+	const handleInputChange = (position, event) => {
+		const guess = event.target.value.toUpperCase().slice(0, 1); // Take only the first character, if any
+		setGuesses({ ...guesses, [position]: guess });
+		if (guess.length === 1) {
+			moveFocus(position);
 		}
 	};
 
-	// Add onFocus handler to set active word when user clicks into a cell
-	const handleFocus = (key) => {
-		if (!isActiveWordKey(key)) {
-			setActiveWordStart(key);
+	const moveFocus = (currentPosition) => {
+		const [row, col] = currentPosition.split("-").map(Number);
+		let nextPosition = getNextPosition(row, col, focusDirection);
+
+		// Try to move in the current direction first
+		if (!isPositionValid(nextPosition)) {
+			// Switch direction if the next position in the current direction is invalid (out of bounds)
+			const newDirection = focusDirection === "across" ? "down" : "across";
+			nextPosition = getNextPosition(row, col, newDirection);
+			if (isPositionValid(nextPosition)) {
+				setFocusDirection(newDirection); // Update the direction if switched successfully
+			} else {
+				// If neither direction is valid, do not change focus
+				return;
+			}
+		}
+
+		// Focus the next cell, even if it's filled (allowing overwriting)
+		if (inputRefs.current[nextPosition]) {
+			inputRefs.current[nextPosition].focus();
 		}
 	};
 
-	// Helper function to determine if a key is part of the active word
-	const isActiveWordKey = (key) => {
-		if (!activeWordStart) return false;
-		const [startY, startX] = activeWordStart.split("-").map(Number);
-		const [keyY, keyX] = key.split("-").map(Number);
-		const activeWord = guesses[activeWordStart];
-
-		if (
-			activeWord.direction === "across" &&
-			startY === keyY &&
-			keyX >= startX
-		) {
-			return true;
-		} else if (
-			activeWord.direction === "down" &&
-			startX === keyX &&
-			keyY >= startY
-		) {
-			return true;
-		}
-		return false;
-	};
-
-	const getNextCellKey = (currentKey, direction) => {
-		const [y, x] = currentKey.split("-").map(Number);
-
+	const getNextPosition = (row, col, direction) => {
 		if (direction === "across") {
-			return `${y}-${x + 1}`;
+			return `${row}-${col + 1}`;
 		} else {
-			// Assuming the only other direction is "down"
-			return `${y + 1}-${x}`;
+			return `${row + 1}-${col}`;
 		}
 	};
 
-	//using the modal
-	// const handleClueIconClick = (clues) => {
-	// 	// Log the clues array received to check its initial state
-	// 	console.log("Received clues:", clues);
-
-	// 	// Map over the clues array to create image elements and log each URL
-	// 	const images = clues.map((clue, index) => {
-	// 		console.log(`Clue URL at index ${index}:`, clue); // Log each clue URL
-	// 		return (
-	// 			<img
-	// 				key={index}
-	// 				src={clue}
-	// 				alt={`Clue ${index + 1}`}
-	// 			/>
-	// 		);
-	// 	});
-
-	// 	// Log the array of image elements to see if they were created correctly
-	// 	console.log("Image elements created:", images);
-
-	// 	// Set the modal content to the array of image elements
-	// 	setModalContent(images);
-
-	// 	// Open the modal
-	// 	setModalOpen(true); // Log modal opening action
-	// 	console.log("Modal opened with content.");
-	// };
-
-	//using the display clue area
-	const handleClueIconClick = (clues) => {
-		console.log("Received clues:", clues); // Log for debugging purposes
-		setSelectedClues(clues); // Update state to display clues
+	const isPositionValid = (position) => {
+		const [row, col] = position.split("-").map(Number);
+		// First check if the row exists
+		if (row >= levels[currentLevel].grid.length || row < 0) {
+			return false;
+		}
+		// Then check if the column exists in the row
+		if (col >= levels[currentLevel].grid[row].length || col < 0) {
+			return false;
+		}
+		// Finally, check if the cell is not marked as empty
+		return !levels[currentLevel].grid[row][col].empty;
 	};
 
-	const renderGrid = () => {
-		const { width, height } = calculateGridSize(currentLevel.words);
-		const grid = [];
-		for (let y = 1; y <= height; y++) {
-			const row = [];
-			for (let x = 1; x <= width; x++) {
-				const key = `${y}-${x}`;
-				const cell = guesses[key];
-				// Dynamically check against currentLevel intersections
-				const isIntersection = currentLevel.intersections.some(
-					(intersection) =>
-						intersection.position.x + 1 === x &&
-						intersection.position.y + 1 === y
-				);
+	const renderCell = (cell, rowIndex, colIndex) => {
+		const position = `${rowIndex}-${colIndex}`;
+		const grid = levels[currentLevel].grid; // Correctly define grid from the levels object
+		const clueUrl = cell.clue ? levels[currentLevel].clues[cell.clue] : null;
+		let cellStyle = {};
 
-				const isCorrectGuess = cell && cell.guess === cell.letter;
-
-				row.push(
-					<div
-						key={key}
-						className={`grid-cell ${isIntersection ? "intersection" : ""} ${
-							isCorrectGuess ? "correct-guess" : ""
-						}`}>
-						{isIntersection && (
-							<button
-								className="clue-icon"
-								onClick={() =>
-									handleClueIconClick(
-										currentLevel.intersections.find(
-											(intersection) =>
-												intersection.position.x + 1 === x &&
-												intersection.position.y + 1 === y
-										).clues
-									)
-								}
-								style={{ position: "absolute", zIndex: 2 }}>
-								<FontAwesomeIcon icon={faSearch} />
-							</button>
-						)}
-						<input
-							ref={cellRefs.current[key]}
-							type="text"
-							className={`input ${cell ? "" : "unused-cell"}`}
-							value={cell?.guess || ""}
-							onChange={(e) => handleInputChange(e, key)}
-							onFocus={() => handleFocus(key)}
-							maxLength="1"
-							disabled={!cell}
-							style={{ zIndex: 1 }}
-						/>
-					</div>
+		// Check neighboring cells for the same clue to adjust borders
+		const checkNeighbor = (offsetRow, offsetCol) => {
+			const neighborRow = rowIndex + offsetRow;
+			const neighborCol = colIndex + offsetCol;
+			if (
+				neighborRow >= 0 &&
+				neighborRow < grid.length &&
+				neighborCol >= 0 &&
+				neighborCol < grid[neighborRow].length
+			) {
+				const neighbor = grid[neighborRow][neighborCol];
+				return (
+					neighbor.clue && levels[currentLevel].clues[neighbor.clue] === clueUrl
 				);
 			}
-			grid.push(
-				<div
-					key={`row-${y}`}
-					className="grid-row">
-					{row}
-				</div>
+			return false;
+		};
+
+		// Adjust borders based on neighboring cells
+		if (clueUrl) {
+			cellStyle.borderTop = checkNeighbor(-1, 0) ? "none" : "1px solid #ccc";
+			cellStyle.borderBottom = checkNeighbor(1, 0) ? "none" : "1px solid #ccc";
+			cellStyle.borderLeft = checkNeighbor(0, -1) ? "none" : "1px solid #ccc";
+			cellStyle.borderRight = checkNeighbor(0, 1) ? "none" : "1px solid #ccc";
+		}
+
+		if (cell.empty) {
+			return <td className="empty-cell"></td>;
+		}
+		if (cell.clue) {
+			const clueColor = getClueColor(clueUrl);
+			return (
+				<td
+					className="clue-cell"
+					style={{ backgroundColor: clueColor, ...cellStyle }}
+					onClick={() => setCurrentClueUrl(clueUrl)} // Assuming setCurrentClueUrl is defined to handle clue clicks
+				></td>
 			);
 		}
-		return grid;
+		const correct = guesses[position] === cell.letter;
+		if (cell.letter) {
+			return (
+				<td
+					className={correct ? "letter-cell correct" : "letter-cell"}
+					style={{ ...cellStyle }}>
+					<input
+						ref={(el) => (inputRefs.current[position] = el)}
+						type="text"
+						maxLength="1"
+						value={guesses[position] || ""}
+						onChange={(e) => handleInputChange(position, e)}
+						onFocus={(e) => e.target.select()} // Automatically select text when focused
+						onClick={(e) => e.target.select()} // Also select text on click to ensure overwrite capability
+						className={correct ? "correct" : ""}
+						disabled={false} // Ensure input is always enabled
+					/>
+				</td>
+			);
+		}
 	};
 
-	const completeLevel = () => {
-		setLevelComplete(true);
-		// You might want to stop the confetti after a certain time
-		setTimeout(() => setLevelComplete(false), 10000); // stop after 3  seconds
-	};
 	return (
-		<div>
-			{levelComplete && <Confetti recycle={false} />}
-			<div className="level-selection">
-				<button onClick={() => setCurrentLevel(level1)}>
-					Level 1- "The Repeater"
-				</button>
-				{/* Uncomment if enabling Level 2 */}
-				{/* <button onClick={() => setCurrentLevel(level2)}>
-					Level 2- "Slap Pals"
-				</button> */}
-			</div>
+		<div className="game-container">
+			<select
+				className="level-selector"
+				onChange={handleLevelChange}
+				value={currentLevel}>
+				{Object.keys(levels).map((level) => (
+					<option
+						key={level}
+						value={level}>
+						{level}
+					</option>
+				))}
+			</select>
+			<h1>{levels[currentLevel].title}</h1>
+			<table className="game-board">
+				<tbody>
+					{levels[currentLevel].grid.map((row, rowIndex) => (
+						<tr key={rowIndex}>
+							{row.map((cell, colIndex) =>
+								renderCell(cell, rowIndex, colIndex)
+							)}
+						</tr>
+					))}
+				</tbody>
+			</table>
 			<div
-				className="game-container"
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "start",
 					width: "100%",
-					height: "100vh",
+					height: "auto",
+					maxWidth: "600px",
+					marginTop: "20px",
 				}}>
-				<div
-					className="game-board"
-					style={{
-						flexBasis: "50%",
-						flexGrow: 0,
-						flexShrink: 0,
-						margin: "10px",
-					}}>
-					{renderGrid()}
-				</div>
-				<div
-					className="clue-display-area"
-					style={{
-						flexGrow: 1,
-						flexBasis: "50%",
-						border: "1px solid black",
-						padding: "20px",
-						margin: "10px",
-						overflow: "auto",
-						height: "90vh",
-						maxWidth: "50vh",
-					}}>
-					{selectedClues.length > 0 ? (
-						selectedClues.map((clue, index) => (
-							<img
-								key={index}
-								src={clue}
-								alt={`Clue ${index + 1}`}
-								style={{
-									width: "100%",
-									height: "100%",
-									objectFit: "contain",
-									marginBottom: "10px",
-								}}
-							/>
-						))
-					) : (
-						<p>No clues selected</p>
-					)}
-				</div>
+				{currentClueUrl && (
+					<img
+						src={currentClueUrl}
+						alt="Clue"
+						style={{ width: "100%", height: "100%", objectFit: "contain" }}
+					/>
+				)}
 			</div>
 		</div>
 	);

@@ -1,112 +1,129 @@
-/* General App Styles */
-.app-container {
-  text-align: center;
-  padding: 20px;
-}
-
-.app-title {
-  font-size: 2em;
-  margin-bottom: 0.5em;
-}
-
-.app-instructions {
-  margin-bottom: 2em;
-  font-size: 1em;
-  max-width: 80%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Game Board Styles */
 .game-container {
   display: flex;
-  flex-direction: row; /* Updated to row for side-by-side layout */
-  align-items: stretch; /* Ensure children fill the container height */
-}
-
-.game-board {
-  display: flex;
   flex-direction: column;
-  font-family: Arial, sans-serif;
-  flex-grow: 1; /* Allows flexible growth to fit space */
-  margin: 10px;
-}
-
-.grid-row {
-  display: flex;
-}
-
-.grid-cell {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #000;
-  display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  min-height: 100%; 
+  background-color: #f0f0f0;
+  padding: 20px;
+  overflow: visible; /* Ensures no part of the gameboard is hidden due to overflow */
+  padding-top: 20px; /* Adds space above the gameboard */
+  position: relative; /* Adjust positioning as necessary */
+  top: 20px; /* Moves the gameboard down */
 }
 
-/* Input and Icon Styles */
-.input {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.clue-icon {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: none;
-  border: none;
+.level-selector {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  padding: 10px;
   cursor: pointer;
 }
 
-/* Cell State Styles */
-.unused-cell {
-  background-color: darkgrey;
+.game-board {
+    border-collapse: collapse; /* Merges cell borders */
+    background-color: black; /* Grid background color */
+    width: auto; /* Lets the table width be as wide as its content */
+    table-layout: fixed; /* Ensures consistent cell sizing */
 }
 
-.correct-guess .input {
+.game-board tr {
+    border: none;
+}
+
+.game-board td {
+    border: 1px solid #ccc; /* Light grey border for cells */
+    padding: 0; /* No padding inside cells */
+    text-align: center;
+    vertical-align: middle;
+    width: 50px; /* Width of each cell */
+    height: 50px; /* Height of each cell, equal to width to maintain a square */
+    background-color: sgrey; /* Cell background color */
+}
+
+
+.empty-cell {
+  background-color: grey;
+}
+
+.letter-cell {
+  background-color: white; /* Ensures the letter cells start with a white background */
+}
+
+.letter-cell input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent; /* Makes the input transparent to show the cell's background */
+  text-align: center;
+  font-size: large;
+  color: black;
+  outline: none;
+}
+
+.letter-cell {
+  background-color: white; /* Default background for letter cells */
+}
+
+.letter-cell input {
+  width: 100%;
+  height: 100%;
+  border: none;  /* Ensures no internal border within the cell */
+  background-color: transparent; /* Makes the input background transparent to show the cell's color */
+  text-align: center;
+  font-size: large;
+  color: black;
+  outline: none;
+}
+
+.letter-cell input.correct {
   background-color: lightgreen;
+  color: black;
+  /* Ensure the input doesn't alter the cell border appearance */
 }
 
-/* Clue Display Area Styles */
-.clue-display-area {
-  flex-grow: 3; /* Allows the clue area to take more space */
-  border: 1px solid black;
+.clue-cell {
+  background-color: blue;
+  color: white;
+  cursor: pointer;
+}
+
+/* App.css */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
-  margin: 10px;
-  overflow: auto;
-  align-self: stretch; /* Adjusts to match the parent's height */
+  font-family: 'Arial', sans-serif;
 }
 
-.clue-display-area img {
-  width: 100%; /* Ensures image takes full width of the container */
-  height: auto; /* Maintains aspect ratio */
-  object-fit: contain; /* Ensures the image fits within the bounds without stretching */
-  margin-bottom: 10px; /* Adds space between images if there are multiple */
+.app-title {
+  font-size: 1.8rem; /* Larger text for easier reading on small screens */
 }
 
-/* Responsive Design Adjustments */
-@media (max-width: 768px) {
-  .clue-display-area img {
-    max-height: 150px;
+.app-instructions {
+  font-size: 1rem; /* Optimal reading size */
+  text-align: center; /* Center text for better aesthetics on mobile */
+  margin: 0 10px; /* Add some horizontal padding */
+}
+
+@media (max-width: 600px) {
+  .app-title {
+      font-size: 1.6rem; /* Slightly smaller on very small devices */
+  }
+  .app-instructions {
+      font-size: 0.9rem;
   }
 }
-
-@media (max-width: 480px) {
-  .clue-display-area img {
-    max-height: 100px;
-  }
-}
-
-.level-selection {
-  margin-bottom: 20px;
-}
-
-.level-selection button {
-  margin-right: 10px;
-  padding: 5px 10px;
+.clue-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }

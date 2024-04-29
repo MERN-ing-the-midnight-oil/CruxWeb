@@ -18,5 +18,20 @@
 		"titleBar.inactiveBackground": "#61dafb99",
 		"titleBar.inactiveForeground": "#15202b99"
 	},
-	"peacock.color": "#61dafb"
+	"peacock.color": "#61dafb",
+
+	"highlight.regexes": {
+		"(\"[A-Z])_\"": {
+			"filterLanguageRegex": "javascript",
+			"decorations": [
+				{ "color": "#ff0000" } // Red color for the capital letter in the pattern "[A-Z]_"
+			]
+		},
+		"(\"([0-9]{2})\")": {
+			"filterLanguageRegex": "javascript",
+			"decorations": [
+				{ "color": "#eeff00" } // Red color for the double digit numbers inside quotes
+			]
+		}
+	}
 }

@@ -1,110 +1,198 @@
 import React, { useState, useRef, useEffect } from "react";
+import ColorHash from "color-hash";
 import level1 from "./levels/level1";
+import level2 from "./levels/level2";
+
+const colorHash = new ColorHash();
+const getClueColor = (clueUrl) => {
+	return colorHash.hex(clueUrl); // Returns a hex color based on the input string
+};
 
 const GameBoard = () => {
-	const [grid, setGrid] = useState(
-		level1.grid.map((row) =>
-			row.map((cell) => (cell && cell.letter ? { ...cell, letter: "" } : cell))
-		)
-	); // Initialize letter cells as empty
-	const [selectedClue, setSelectedClue] = useState(null);
-	const inputRefs = useRef(new Map());
-	const [currentFocus, setCurrentFocus] = useState(null);
+	const levels = { level1, level2 };
+	const [currentLevel, setCurrentLevel] = useState("level1");
+	const [guesses, setGuesses] = useState({});
+	const [showClueModal, setShowClueModal] = useState(false);
+	const [currentClueUrl, setCurrentClueUrl] = useState("");
+	const modalRef = useRef(null);
+	const inputRefs = useRef({});
+	const [focusDirection, setFocusDirection] = useState("across");
 
 	useEffect(() => {
-		console.log("Effect running for focus change:", currentFocus);
-		if (currentFocus) {
-			const { rowIndex, cellIndex } = currentFocus;
-			const nextCellIndex = cellIndex + 1;
-			if (
-				nextCellIndex < grid[rowIndex].length &&
-				grid[rowIndex][nextCellIndex]?.letter !== undefined
-			) {
-				const nextInputRef = inputRefs.current.get(
-					`${rowIndex}-${nextCellIndex}`
-				);
-				if (nextInputRef) {
-					nextInputRef.focus();
-					console.log("Focusing next cell:", rowIndex, nextCellIndex);
-				}
+		const savedGuesses = localStorage.getItem(`guesses-${currentLevel}`);
+		if (savedGuesses) {
+			setGuesses(JSON.parse(savedGuesses));
+		} else {
+			setGuesses({});
+		}
+	}, [currentLevel]);
+
+	useEffect(() => {
+		const savedGuesses = JSON.stringify(guesses);
+		localStorage.setItem(`guesses-${currentLevel}`, savedGuesses);
+	}, [guesses, currentLevel]);
+
+	const handleLevelChange = (event) => {
+		setCurrentLevel(event.target.value);
+		setGuesses({});
+		inputRefs.current = {};
+	};
+
+	const handleInputChange = (position, event) => {
+		const guess = event.target.value.toUpperCase().slice(0, 1);
+		setGuesses({ ...guesses, [position]: guess });
+		moveFocus(position);
+	};
+
+	const moveFocus = (currentPosition) => {
+		const [row, col] = currentPosition.split("-").map(Number);
+		let nextPosition = getNextPosition(row, col, focusDirection);
+
+		if (!isPositionValid(nextPosition)) {
+			const newDirection = focusDirection === "across" ? "down" : "across";
+			nextPosition = getNextPosition(row, col, newDirection);
+			if (isPositionValid(nextPosition)) {
+				setFocusDirection(newDirection);
+			} else {
+				return;
 			}
 		}
-	}, [currentFocus, grid]);
 
-	const handleCellClick = (cell, rowIndex, cellIndex) => {
-		if (!cell || !cell.letter) return; // Ignore clicks on empty or clue cells
-		inputRefs.current.get(`${rowIndex}-${cellIndex}`).focus();
-	};
-
-	const handleKeyDown = (event, rowIndex, cellIndex) => {
-		const key = event.key.toUpperCase();
-		if (key.length === 1 && /[A-Z]/.test(key)) {
-			console.log("Key down detected:", key);
-			// Update the cell immediately with the new character
-			const updatedGrid = grid.map((row, ri) =>
-				row.map((cell, ci) => {
-					if (ri === rowIndex && ci === cellIndex && cell) {
-						return { ...cell, letter: key };
-					}
-					return cell;
-				})
-			);
-			setGrid(updatedGrid);
-
-			// Prepare to move focus to the next letter cell
-			setCurrentFocus({ rowIndex, cellIndex });
-
-			// Prevent default to avoid the key being added twice
-			event.preventDefault();
+		if (inputRefs.current[nextPosition]) {
+			inputRefs.current[nextPosition].focus();
 		}
 	};
 
-	const getCellStyle = (cell, rowIndex, cellIndex) => {
-		if (!cell) return { backgroundColor: "darkgrey" }; // Inactive cells background
-		if (cell.clue) return { backgroundColor: "lightblue" }; // Clue cells background
-		const correctLetter = level1.grid[rowIndex][cellIndex]?.letter; // Retrieve the correct letter from the initial state
-		return {
-			backgroundColor:
-				cell.letter && cell.letter === correctLetter ? "green" : "white", // Change to green if correct
+	const getNextPosition = (row, col, direction) => {
+		if (direction === "across") {
+			return `${row}-${col + 1}`;
+		} else {
+			return `${row + 1}-${col}`;
+		}
+	};
+
+	const isPositionValid = (position) => {
+		const [row, col] = position.split("-").map(Number);
+		if (row >= levels[currentLevel].grid.length || row < 0) {
+			return false;
+		}
+		if (col >= levels[currentLevel].grid[row].length || col < 0) {
+			return false;
+		}
+		return !levels[currentLevel].grid[row][col].empty;
+	};
+
+	const handleTouchStart = (clueUrl, e) => {
+		e.stopPropagation();
+		setCurrentClueUrl(clueUrl);
+		setShowClueModal(true);
+	};
+
+	const handleTouchEnd = (e) => {
+		e.stopPropagation();
+		setShowClueModal(false);
+	};
+
+	const renderCell = (cell, rowIndex, colIndex) => {
+		const position = `${rowIndex}-${colIndex}`;
+		const grid = levels[currentLevel].grid;
+		const clueUrl = cell.clue ? levels[currentLevel].clues[cell.clue] : null;
+		let cellStyle = {
+			borderTop: "1px solid #ccc",
+			borderBottom: "1px solid #ccc",
+			borderLeft: "1px solid #ccc",
+			borderRight: "1px solid #ccc",
 		};
+
+		if (cell.clue) {
+			const clueColor = getClueColor(clueUrl);
+			return (
+				<td
+					className="clue-cell"
+					style={{ backgroundColor: clueColor, ...cellStyle }}
+					onTouchStart={(e) => handleTouchStart(clueUrl, e)}
+					onTouchEnd={handleTouchEnd}
+					onMouseDown={(e) => {
+						e.stopPropagation();
+						setCurrentClueUrl(clueUrl);
+						setShowClueModal(true);
+					}}
+					onMouseUp={(e) => {
+						e.stopPropagation();
+						setShowClueModal(false);
+					}}
+					onContextMenu={(e) => e.preventDefault()}></td>
+			);
+		} else if (cell.empty) {
+			return (
+				<td
+					className="empty-cell"
+					style={cellStyle}></td>
+			);
+		} else {
+			const correct = guesses[position] === cell.letter;
+			return (
+				<td
+					className={correct ? "letter-cell correct" : "letter-cell"}
+					style={cellStyle}>
+					<input
+						ref={(el) => (inputRefs.current[position] = el)}
+						type="text"
+						maxLength="1"
+						value={guesses[position] || ""}
+						onChange={(e) => handleInputChange(position, e)}
+						onFocus={(e) => e.target.select()}
+						className={correct ? "correct" : ""}
+						disabled={!cell.letter}
+					/>
+				</td>
+			);
+		}
 	};
 
 	return (
-		<div>
-			<div className="grid">
-				{grid.map((row, rowIndex) => (
-					<div
-						key={rowIndex}
-						className="row">
-						{row.map((cell, cellIndex) => (
-							<div
-								key={cellIndex}
-								className="cell"
-								style={getCellStyle(cell, rowIndex, cellIndex)}
-								onClick={() => handleCellClick(cell, rowIndex, cellIndex)}>
-								{cell && cell.letter !== undefined ? (
-									<input
-										type="text"
-										value={cell.letter || ""}
-										onKeyDown={(e) => handleKeyDown(e, rowIndex, cellIndex)}
-										maxLength="1"
-										ref={(el) =>
-											inputRefs.current.set(`${rowIndex}-${cellIndex}`, el)
-										}
-									/>
-								) : (
-									""
-								)}
-							</div>
-						))}
-					</div>
+		<div className="game-container">
+			<select
+				className="level-selector"
+				onChange={handleLevelChange}
+				value={currentLevel}>
+				{Object.keys(levels).map((level) => (
+					<option
+						key={level}
+						value={level}>
+						{level}
+					</option>
 				))}
-			</div>
-			{selectedClue && (
-				<div className="clue-display">
+			</select>
+			<h1>{levels[currentLevel].title}</h1>
+			<table className="game-board">
+				<tbody>
+					{levels[currentLevel].grid.map((row, rowIndex) => (
+						<tr key={rowIndex}>
+							{row.map((cell, colIndex) =>
+								renderCell(cell, rowIndex, colIndex)
+							)}
+						</tr>
+					))}
+				</tbody>
+			</table>
+			{showClueModal && (
+				<div
+					ref={modalRef}
+					className="clue-modal"
+					onTouchEnd={(e) => {
+						e.stopPropagation();
+						setShowClueModal(false);
+					}}
+					onMouseUp={(e) => {
+						e.stopPropagation();
+						setShowClueModal(false);
+					}}>
 					<img
-						src={selectedClue}
+						src={currentClueUrl}
 						alt="Clue"
+						style={{ width: "100%", height: "100%", objectFit: "contain" }}
+						onContextMenu={(e) => e.preventDefault()}
 					/>
 				</div>
 			)}
@@ -113,14 +201,3 @@ const GameBoard = () => {
 };
 
 export default GameBoard;
-
-// Include basic styles for the grid
-const style = document.createElement("style");
-style.textContent = `
-  .grid { display: flex; flex-direction: column; }
-  .row { display: flex; }
-  .cell { width: 40px; height: 40px; border: 1px solid black; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .cell input { width: 100%; height: 100%; text-align: center; border: none; background: transparent; font-size: large; }
-  .clue-display { margin-top: 20px; }
-`;
-document.head.appendChild(style);
