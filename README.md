@@ -1,6 +1,6 @@
 # Crux & Clues Game
 
-Welcome to "Crux", designed and created by me, Rhys Smoker. It’s a twist on the traditional crossword puzzle- instead of textual clues, you get visual clues that pertain to more than one word (this should remind you a bit of the game "CodeNames"). Each intersection in the grid has a clickable magnifying glass icon. When you click it, it displays images that relate somehow to both of the intersecting words.
+Welcome to "Crux", designed and created by me, Rhys Smoker. It’s a twist on the traditional crossword puzzle- instead of textual clues, you get visual clues that pertain to more than one word (this might remind you a bit of the game "Dixit"). Colored areas around the word cells are clickable links to the clues that pertain to the words they are touching.
 
 ## Design
 
