@@ -2,7 +2,7 @@
 import { createCluePaths } from "../utils/cluePathGenerator";
 
 const levelId = "level2"; // Unique identifier for each level
-const title = "Level 2 is Coming Soon: Pals and partial pals"; // Title of the level
+const title = `Level 2 is Coming Soon: "Pals and partial pals"`; // Title of the level
 
 const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Base URL for images
 

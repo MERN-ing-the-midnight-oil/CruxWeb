@@ -1,7 +1,7 @@
 import { createCluePaths } from "../utils/cluePathGenerator";
 const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Base URL for images
 const levelId = "level1"; // Unique identifier for level 1
-const title = "Don't count your cliches before they hatch."; // Title of the leve
+const title = `"Don't count your clichés before they hatch."`; // Title of the leve
 // The visual representation of the grid (the "easy grid!")
 // prettier-ignore
 const visualGrid = [
@@ -15,12 +15,12 @@ const visualGrid = [
     [["##"], ["B_"], ["I_"], ["R_"], ["D_"],["S_"]],
     [["##"], ["U_"], ["03"], ["##"], ["03"],["##"]],
 	[["##"], ["S_"], ["03"], ["03"], ["03"],["##"]],
-    [["##"], ["H_"], ["A_"], ["N_"], ["D_"],["04"]],
-	[["##"], ["##"], ["##"], ["05"], ["O_"],["04"]],
+    [["##"], ["H_"], ["A_"], ["N_"], ["D_"],["##"]],
+	[["##"], ["16"], ["##"], ["05"], ["O_"],["04"]],
     [["##"], ["##"], ["##"], ["05"], ["W_"],["04"]],
 	[["##"], ["##"], ["W_"], ["I_"], ["N_"],["D_"]],
     [["##"], ["##"], ["H_"], ["06"], ["06"],["06"]],
-	[["09"], ["09"], ["I_"], ["07"], ["06"],["06"]],
+	[["09"], ["09"], ["I_"], ["07"], ["##"],["06"]],
     [["09"], ["08"], ["S_"], ["T_"], ["O_"],["P_"]],
 	[["W_"], ["E_"], ["T_"], ["##"], ["##"],["##"]],
     [["##"], ["##"], ["L_"], ["##"], ["##"],["##"]],
@@ -36,7 +36,7 @@ const visualGrid = [
 ];
 
 function createGridFromVisual(visualGrid) {
-	return visualGrid.map((row) => {
+	const grid = visualGrid.map((row) => {
 		if (row.length === 0) {
 			return [];
 		}
@@ -56,6 +56,10 @@ function createGridFromVisual(visualGrid) {
 			return { empty: true };
 		});
 	});
+
+	// Log the created grid to the console for demonstration purposes
+	console.log("Created Grid:", grid);
+	return grid;
 }
 
 const numberOfClues = 99;
