@@ -2,25 +2,19 @@
 import { createCluePaths } from "../utils/cluePathGenerator";
 
 const levelId = "level2"; // Unique identifier for each level
-const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Base URL for images
+const title = "Level 2 is Coming Soon: Pals and partial pals"; // Title of the level
 
-// function createCluePaths(basePath, levelId) {
-// 	return {
-// 		clue00: `${basePath}/${levelId}/clue00.webp`,
-// 		clue01: `${basePath}/${levelId}/clue01.webp`,
-// 		clue02: `${basePath}/${levelId}/clue02.webp`,
-// 		clue03: `${basePath}/${levelId}/clue03.webp`,
-// 	};
-// }
+const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Base URL for images
 
 // Define the visual representation of the grid
 // prettier-ignore
 const visualGrid = [
-	[["T_"], ["W_"], ["O_"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],
-	[["##"], ["T_"], ["W_"], ["O_"], ["03"], ["03"], ["##"], ["##"], ["##"], ["01"]],
-	[["##"], ["##"], ["00"], ["00"], ["00"], ["00"], ["00"], ["##"], ["##"], ["01"]],
-	[["##"], ["##"], ["00"], ["##"], ["##"], ["##"], ["00"], ["##"], ["##"], ["##"]],
-	[["##"], ["##"], ["00"], ["##"], ["##"], ["##"], ["00"], ["##"], ["##"], ["##"]],
+    [["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],
+    [["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],
+    [["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],
+    [["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],
+    [["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],
+    [["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],
 ];
 
 function createGridFromVisual(visualGrid) {
@@ -33,19 +27,14 @@ function createGridFromVisual(visualGrid) {
 			if (content === "##") {
 				return { empty: true };
 			}
-			if (content.match(/^\d\d$/)) {
-				return { clue: `clue${content}` };
-			}
-			if (content.endsWith("_")) {
-				return { letter: content[0] };
-			}
-			return { empty: true };
+			return { empty: true }; // Default case for now as all cells are empty
 		});
 	});
 }
 
-const numberOfClues = 4;
+const numberOfClues = 0; // Currently no clues
 const level2 = {
+	title: title,
 	grid: createGridFromVisual(visualGrid),
 	clues: createCluePaths(baseUrl, levelId, numberOfClues),
 };
