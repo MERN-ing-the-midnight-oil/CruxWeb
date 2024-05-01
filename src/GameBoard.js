@@ -92,10 +92,8 @@ const GameBoard = () => {
 		e.stopPropagation();
 		setShowClueModal(false);
 	};
-
 	const renderCell = (cell, rowIndex, colIndex) => {
 		const position = `${rowIndex}-${colIndex}`;
-		const grid = levels[currentLevel].grid;
 		const clueUrl = cell.clue ? levels[currentLevel].clues[cell.clue] : null;
 		let cellStyle = {
 			borderTop: "1px solid #ccc",
@@ -105,7 +103,13 @@ const GameBoard = () => {
 		};
 
 		if (cell.clue) {
-			const clueColor = getClueColor(clueUrl);
+			const clueColor = getClueColor(clueUrl); // Get the background color for the clue cell
+			// Set all borders to the same color as the background
+			cellStyle.borderTop = `1px solid ${clueColor}`;
+			cellStyle.borderBottom = `1px solid ${clueColor}`;
+			cellStyle.borderLeft = `1px solid ${clueColor}`;
+			cellStyle.borderRight = `1px solid ${clueColor}`;
+
 			return (
 				<td
 					className="clue-cell"

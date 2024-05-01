@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100%; 
-  background-color: #f0f0f0;
+  background-color: #64e309;
   padding: 20px;
   overflow: visible; /* Ensures no part of the gameboard is hidden due to overflow */
   padding-top: 20px; /* Adds space above the gameboard */
@@ -31,7 +31,7 @@
 }
 
 .game-board td {
-    border: 1px solid #ccc; /* Light grey border for cells */
+    border: 1px solid #d018bd; /* Light grey border for cells */
     padding: 0; /* No padding inside cells */
     text-align: center;
     vertical-align: middle;
@@ -58,10 +58,6 @@
   font-size: large;
   color: black;
   outline: none;
-}
-
-.letter-cell {
-  background-color: white; /* Default background for letter cells */
 }
 
 .letter-cell input {
