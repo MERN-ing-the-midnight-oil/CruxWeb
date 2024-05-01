@@ -74,13 +74,8 @@
 .letter-cell input.correct {
   background-color: lightgreen;
   color: black;
-  padding: 0;
-  border: none;
-  outline: none;
-  box-sizing: border-box;
-  font-size: large;
+  /* Ensure the input doesn't alter the cell border appearance */
 }
-
 
 .clue-cell {
   background-color: blue;
