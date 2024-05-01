@@ -1,11 +1,8 @@
-// src/levels/level1.js
-//ABCD;
-
 import { createCluePaths } from "../utils/cluePathGenerator";
 const baseUrl = process.env.REACT_APP_IMAGE_BASE_URL || ""; // Base URL for images
 const levelId = "level1"; // Unique identifier for level 1
 const title = "Don't count your cliches before they hatch."; // Title of the leve
-// Define the visual representation of the grid
+// The visual representation of the grid (the "easy grid!")
 // prettier-ignore
 const visualGrid = [
 	[["##"], ["##"], ["##"], ["##"], ["##"],["##"]],
@@ -29,11 +26,13 @@ const visualGrid = [
     [["##"], ["##"], ["L_"], ["##"], ["##"],["##"]],
     [["C_"], ["L_"], ["E_"], ["A_"], ["N_"],["##"]],
     [["##"], ["##"], ["##"], ["10"], ["O_"],["N_"]],
-	[["##"], ["##"], ["##"], ["12"], ["S_"],["##"]],
+	[["##"], ["##"], ["##"], ["12"], ["S_"],["15"]],
     [["##"], ["B_"], ["L_"], ["E_"], ["E_"],["D_"]],
 	[["##"], ["##"], ["11"], ["D_"], ["13"],["R_"]],
-    [["##"], ["##"], ["##"], ["G_"], ["##"],["Y_"]],
-	[["##"], ["##"], ["##"], ["E_"], ["##"],["##"]],
+    [["##"], ["##"], ["14"], ["G_"], ["##"],["Y_"]],
+	[["C_"], ["A_"], ["S_"], ["E_"], ["##"],["##"]],
+	[["##"], ["##"], ["##"], ["##"], ["##"],["##"]],
+
 ];
 
 function createGridFromVisual(visualGrid) {

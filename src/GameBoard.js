@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import ColorHash from "color-hash";
+// import ColorHash from "color-hash";
 import level1 from "./levels/level1";
+
 import level2 from "./levels/level2";
 
-const colorHash = new ColorHash();
-const getClueColor = (clueUrl) => {
-	return colorHash.hex(clueUrl); // Returns a hex color based on the input string
-};
+import { getClueColor } from "./utils/getClueColor";
 
 const GameBoard = () => {
 	const levels = { level1, level2 };
