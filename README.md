@@ -1,25 +1,62 @@
-# Crux
+# CRUX 2.0 - Game Development
 
-Welcome to "Crux", designed and created by me, Rhys Smoker. It’s a twist on the traditional crossword puzzle- instead of textual clues, you get visual clues that pertain to more than one word (this might remind you a bit of the game "Dixit"). Colored areas around the word cells are clickable links to the clues that pertain to the words they are touching.
+Welcome to the GitHub repository for CRUX 2.0, an evolution of the original [CRUX](https://mern-ing-the-midnight-oil.github.io/crux/) crossword puzzle game. This version introduces improvements to the game level structure, display, and UX.
 
-## Design
+## Evolution of Level Design
 
-### State Management
+### Original Grid Design
 
-The game leverages several key pieces of state:
+In the original CRUX, I defined levels with a more complex system of word start and end coordinates alongside intersection coordinates. While this method worked, it led to a difficult level initialization process.
 
-- **Guesses**: This state tracks user inputs across the grid. Each cell's content is managed via a state object, where the keys correspond to cell positions and the values to what the user has typed in.
-- **Current Level**: I use a state to switch between different puzzles (`level1`, `level2`, etc.), with each level defined in separate files. This state influences the grid's dynamic rendering based on the selected level.
-- **Selected Clues**: When a user interacts with the magnifying glass icon, this state updates to reflect the clues associated with that particular intersection, which are then displayed in a clue area.
+### Simplifying to Array-Based Levels
 
-### Design Patterns
+The development of CRUX 2.0 brought an "ah-ha" moment—the realization that levels could be more simply and effectively represented as an array of three cell types:
 
-The app is structured around modern React functional components using hooks for state and effect management, ensuring components are both reusable and modular. Here’s how some key design patterns are employed:
+- **Empty Cells (`"##"`)**: Represent areas with no interaction.
+- **Clue Cells (`"01"`, `"02"`, etc.)**: Contain identifiers linking to clues.
+- **Letter Cells (`"A_"`, `"B_"`, etc.)**: Represent letters filled in by players.
 
-- **Componentization**: The game board, each grid cell, and the clue display area are separate components, which simplifies the state management and makes the code more maintainable.
-- **Conditional Rendering**: This is used extensively to show or hide elements based on the game's state, such as displaying clues or indicating correct guesses.
-- **Effect Hook**: React's `useEffect` is crucial for initializing the game based on the level data and responding to level changes, ensuring that all components reflect the current game state.
+This transition is encapsulated in the transition from the old to the new grid definition, dramatically simplifying the level design process.
 
-This architecture not only supports easy maintenance but also facilitates scaling, whether adding new features or more complex levels.
+![New Grid Definition](public/images/readme%20images/newGridDefinition.png "Illustration of the New Grid Definition")
 
-Hope you have as much fun playing "Crux & Clues" as I had building it!
+### Development of the Visual Grid
+
+The simplification led to the development of the visual grid system—a straightforward method that allows easy creation and coding of new puzzle levels using a visually intuitive layout.
+
+![Visual Grid Example](public/images/readme%20images/visualGrid.png "Example of Visual Grid")
+
+## Benefits of the New Design
+
+- **Streamlined Level Creation**: Level designers can now use simple array formats to create and modify levels quickly.
+- **Enhanced Scalability**: New levels can be added more efficiently, and existing levels can be modified without complex recalculations.
+- **Accessibility for Designers**: The visual grid format allows level designers to visually map out the game, making the design process more accessible to those with or without deep technical skills.
+
+## Getting Started with CRUX 2.0
+
+To get started with developing or playing CRUX 2.0, clone this repository and follow the setup instructions below:
+
+```bash
+git clone https://github.com/your-repository-url
+cd crux-2.0
+npm install
+npm start
+```
+
+## Scan to Play on Mobile
+
+If you want to jump right into the game on your mobile device, just scan this QR code. It's a direct link to the live CRUX 2.0 app, and it'll get you playing in no time!
+
+![QR Code](public/images/readme%20images/QRcode.png "Scan to Play")
+
+## Contributing
+
+I'm always looking for feedback and contributions to make CRUX 2.0 even better. If you have ideas or improvements, please contact me directly to discuss any potential collaboration.
+
+## License
+
+This project and all its content are proprietary and protected under intellectual property laws. Use of the game or its code without explicit permission is strictly prohibited.
+
+For any inquiries regarding licensing or use rights, please contact me directly.
+
+Feel free to reach out if you have any questions or just want to chat about the project. Happy puzzling!
