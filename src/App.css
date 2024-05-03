@@ -6,10 +6,10 @@
   min-height: 100%; 
   background-color: #f0f0f0;
   padding: 20px;
-  overflow: visible; /* Ensures no part of the gameboard is hidden due to overflow */
-  padding-top: 20px; /* Adds space above the gameboard */
-  position: relative; /* Adjust positioning as necessary */
-  top: 20px; /* Moves the gameboard down */
+  overflow: visible; 
+  padding-top: 20px; 
+  position: relative; 
+  top: 20px; 
 }
 
 .level-selector {
@@ -20,10 +20,10 @@
 }
 
 .game-board {
-    border-collapse: collapse; /* Merges cell borders */
-    background-color: black; /* Grid background color */
-    width: auto; /* Lets the table width be as wide as its content */
-    table-layout: fixed; /* Ensures consistent cell sizing */
+    border-collapse: collapse; 
+    background-color: black; 
+    width: auto; 
+    table-layout: fixed; 
 }
 
 .game-board tr {
@@ -31,26 +31,26 @@
 }
 
 .game-board td {
-    border: 1px solid #d018bd; /* Light grey border for cells */
-    padding: 0; /* No padding inside cells */
+    border: 1px solid #d018bd; 
+    padding: 0; 
     text-align: center;
     vertical-align: middle;
-    width: 50px; /* Width of each cell */
-    height: 50px; /* Height of each cell, equal to width to maintain a square */
-    background-color: sgrey; /* Cell background color */
+    width: 50px; 
+    height: 50px; 
+    background-color: sgrey; 
 }
 
 
 
 .letter-cell {
-  background-color: white; /* Ensures the letter cells start with a white background */
+  background-color: white; 
 }
 
 .letter-cell input {
   width: 100%;
   height: 100%;
   border: none;
-  background-color: transparent; /* Makes the input transparent to show the cell's background */
+  background-color: transparent; 
   text-align: center;
   font-size: large;
   color: black;
@@ -60,8 +60,8 @@
 .letter-cell input {
   width: 100%;
   height: 100%;
-  border: none;  /* Ensures no internal border within the cell */
-  background-color: transparent; /* Makes the input background transparent to show the cell's color */
+  border: none;  
+  background-color: transparent; 
   text-align: center;
   font-size: large;
   color: black;
@@ -95,18 +95,18 @@
 }
 
 .app-title {
-  font-size: 1.8rem; /* Larger text for easier reading on small screens */
+  font-size: 1.8rem; 
 }
 
 .app-instructions {
-  font-size: 1rem; /* Optimal reading size */
-  text-align: center; /* Center text for better aesthetics on mobile */
-  margin: 0 10px; /* Add some horizontal padding */
+  font-size: 1rem; 
+  text-align: center; 
+  margin: 0 10px; 
 }
 
 @media (max-width: 600px) {
   .app-title {
-      font-size: 1.6rem; /* Slightly smaller on very small devices */
+      font-size: 1.6rem; 
   }
   .app-instructions {
       font-size: 0.9rem;
@@ -125,24 +125,24 @@
   z-index: 1000;
 }
 .empty-cell {
-  background-color: rgb(39, 39, 39);  /* Existing background color */
+  background-color: rgb(39, 39, 39);  
   background-image: linear-gradient(to right, 
       rgba(255, 255, 255, 0) 0%, 
       rgba(255, 255, 255, 0.2) 25%, 
       rgba(255, 255, 255, 0.8) 50%, 
       rgba(255, 255, 255, 0.2) 75%, 
       rgba(255, 255, 255, 0) 100%);
-  background-size: 200% 100%; /* Make sure the gradient is large enough to cover the cycle */
+  background-size: 200% 100%; 
   animation: shimmer 10s infinite linear;
 }
 
 
 @keyframes shimmer {
   0% {
-      background-position: -100%; /* Start from fully left (negative full width) */
+      background-position: -100%; 
   }
   100% {
-      background-position: 100%; /* Move to fully right (positive full width) */
+      background-position: 100%; 
   }
 }
 

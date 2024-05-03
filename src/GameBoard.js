@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-// import ColorHash from "color-hash";
+
 import level1 from "./levels/level1";
 
 import level2 from "./levels/level2";
@@ -101,8 +101,7 @@ const GameBoard = () => {
 		};
 
 		if (cell.clue) {
-			const clueColor = getClueColor(clueUrl); // Get the background color for the clue cell
-			// Set all borders to the same color as the background
+			const clueColor = getClueColor(clueUrl);
 			cellStyle.borderTop = `1px solid ${clueColor}`;
 			cellStyle.borderBottom = `1px solid ${clueColor}`;
 			cellStyle.borderLeft = `1px solid ${clueColor}`;

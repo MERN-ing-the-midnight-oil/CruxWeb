@@ -6,15 +6,12 @@ Welcome to the GitHub repository for CRUX 2.0, an evolution of the original [CRU
 
 ### Original Grid Design
 
-In the original CRUX, I defined levels with a more complex system of word start and end coordinates alongside intersection coordinates. While this method worked, it led to a difficult level initialization process.
+In the original CRUX, I defined levels with a somewhat needlessly complex system of word start and word end coordinates combined with word intersection (clue) coordinates. While this method worked, it made it time consuming to create levels.
+![Old Grid Example](public/images/readme%20images/oldGridDefinition.png "Example of Old Grid")
 
 ### Simplifying to Array-Based Levels
 
-The development of CRUX 2.0 brought an "ah-ha" moment—the realization that levels could be more simply and effectively represented as an array of three cell types:
-
-- **Empty Cells (`"##"`)**: Represent areas with no interaction.
-- **Clue Cells (`"01"`, `"02"`, etc.)**: Contain identifiers linking to clues.
-- **Letter Cells (`"A_"`, `"B_"`, etc.)**: Represent letters filled in by players.
+The development of CRUX 2.0 brought an "ah-ha" moment when I realized that my entire cell array could just be... well... an array.
 
 This transition is encapsulated in the transition from the old to the new grid definition, dramatically simplifying the level design process.
 
@@ -22,41 +19,42 @@ This transition is encapsulated in the transition from the old to the new grid d
 
 ### Development of the Visual Grid
 
-The simplification led to the development of the visual grid system—a straightforward method that allows easy creation and coding of new puzzle levels using a visually intuitive layout.
+But it was still hard to code a game level! I was really hoping that ChatGPT4 or one of the AI chatbots explicitly claiming to be good at crossword puzzles could help. But they were able only to produce gibberish when I would ask them to, for example, make a simple grid with two words intersecting at their common letter. So here is what I came up with- the uncreatively named "Visual Grid"!
 
 ![Visual Grid Example](public/images/readme%20images/visualGrid.png "Example of Visual Grid")
 
-## Benefits of the New Design
+- **Empty Cells (`"##"`)**: Represent areas with no interaction.
+- **Clue Cells (`"01"`, `"02"`, etc.)**: Contain identifiers linking to clues.
+- **Letter Cells (`"A_"`, `"B_"`, etc.)**: Represent letters filled in by players.
+- **Check out my regex magic in the .vscode setting.json!**
 
-- **Streamlined Level Creation**: Level designers can now use simple array formats to create and modify levels quickly.
-- **Enhanced Scalability**: New levels can be added more efficiently, and existing levels can be modified without complex recalculations.
-- **Accessibility for Designers**: The visual grid format allows level designers to visually map out the game, making the design process more accessible to those with or without deep technical skills.
+## Understanding GameBoard.js
 
-## Getting Started with CRUX 2.0
+The `GameBoard` component uses several React hooks to manage the game's dynamic aspects.
 
-To get started with developing or playing CRUX 2.0, clone this repository and follow the setup instructions below:
+### React Hooks Utilized in GameBoard
 
-```bash
-git clone https://github.com/your-repository-url
-cd crux-2.0
-npm install
-npm start
-```
+#### useState
 
-## Scan to Play on Mobile
+`useState` is a hook that lets you add React state to function components. In `GameBoard`, I use `useState` to manage:
 
-If you want to jump right into the game on your mobile device, just scan this QR code. It's a direct link to the live CRUX 2.0 app, and it'll get you playing in no time!
+- `currentLevel`: Tracks the currently active game level.
+- `guesses`: Stores the players' input for each cell.
+- `showClueModal`: Controls the visibility of the modal that displays clues.
+- `currentClueUrl`: Holds the URL for the currently displayed clue image.
 
-![QR Code](public/images/readme%20images/QRcode.png "Scan to Play")
+These states allow the game to remember specific aspects of the game's progress and UI state across re-renders.
 
-## Contributing
+#### useRef
 
-I'm always looking for feedback and contributions to make CRUX 2.0 even better. If you have ideas or improvements, please contact me directly to discuss any potential collaboration.
+`useRef` is used to directly create a reference to DOM elements and persist values across renders without causing additional renders when the data changes. In the component:
 
-## License
+- `modalRef`: Provides a direct way to manipulate the DOM for the clue modal, particularly useful for focus management and accessibility.
+- `inputRefs`: Maps input elements for each cell, enabling direct manipulation for focus management, particularly during navigation across the crossword puzzle.
 
-This project and all its content are proprietary and protected under intellectual property laws. Use of the game or its code without explicit permission is strictly prohibited.
+#### useEffect
 
-For any inquiries regarding licensing or use rights, please contact me directly.
+`useEffect` lets you perform side effects in function components. It's used in `GameBoard` for:
 
-Feel free to reach out if you have any questions or just want to chat about the project. Happy puzzling!
+- **Loading and Saving Guesses**: Automatically load guesses from local storage when the level changes and save them whenever guesses are updated. This ensures that player progress is preserved.
+- **Persistence**: The use of local storage allows the game state to persist between sessions, improving user experience by allowing players to pick up where they left off.

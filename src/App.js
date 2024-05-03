@@ -1,6 +1,6 @@
 import React from "react";
-import "./App.css"; // Assuming your styles are here
-import GameBoard from "./GameBoard"; // Adjust the import path if necessary
+import "./App.css";
+import GameBoard from "./GameBoard";
 
 function App() {
 	return (
