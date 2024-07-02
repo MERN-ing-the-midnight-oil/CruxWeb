@@ -1,3 +1,4 @@
+//this GameBoard attempts to use "SParkle" but isn't working
 import React, { useState, useRef, useEffect } from "react";
 import Confetti from "react-confetti";
 import level1 from "./levels/level1";
@@ -16,20 +17,6 @@ const GameBoard = () => {
 	const [focusDirection, setFocusDirection] = useState("across");
 	const [confettiActive, setConfettiActive] = useState(false);
 	const [confettiOrigin, setConfettiOrigin] = useState({ x: 0.5, y: 0.5 });
-	const [sparklingCells, setSparklingCells] = useState({});
-
-	// experimenting with DOMTokenList
-	useEffect(() => {
-		const logTokenLists = () => {
-			const cells = document.querySelectorAll(".game-board td"); // Now targeting 'td' instead of 'input'
-			for (let i = 0; i < cells.length && i < 12; i++) {
-				// Ensures it doesn't go out of bounds if there are fewer than 12 cells
-				console.log(`Cell ${i + 1} classes:`, cells[i].classList);
-			}
-		};
-
-		setTimeout(logTokenLists, 500); // Adjust delay as necessary
-	}, []); // Dependency array remains empty to run once after the component mounts
 
 	useEffect(() => {
 		const savedGuesses = localStorage.getItem(`guesses-${currentLevel}`);
@@ -50,6 +37,7 @@ const GameBoard = () => {
 		setGuesses({});
 		inputRefs.current = {};
 	};
+
 	const handleInputChange = (position, event) => {
 		const newGuess = event.target.value.toUpperCase().slice(0, 1);
 		const [rowIndex, colIndex] = position.split("-").map(Number);
@@ -70,18 +58,15 @@ const GameBoard = () => {
 				position
 			);
 			if (wordCompleted) {
-				// Updating the state to trigger sparkle class
-				setSparklingCells((prev) => ({ ...prev, [position]: true }));
-
-				alert(`Word completed at position ${position}!`);
+				const inputElement = event.target;
+				console.log("Before adding sparkle:", inputElement.classList); // Log class list before adding
+				inputElement.classList.add("sparkle");
+				console.log("After adding sparkle:", inputElement.classList); // Log class list after adding
 
 				setTimeout(() => {
-					setSparklingCells((prev) => {
-						const newSparkles = { ...prev };
-						delete newSparkles[position];
-						return newSparkles;
-					});
-				}, 1000);
+					inputElement.classList.remove("sparkle");
+					console.log("Sparkle class removed"); // Check if class is removed after delay
+				}, 1000000); // Temporarily long timeout for testing
 			}
 		}
 	};
@@ -149,20 +134,6 @@ const GameBoard = () => {
 			borderRight: "1px solid #ccc",
 		};
 
-		// Define the base class name for the cell and input separately
-		let cellClassNames = "letter-cell";
-		let inputClassNames = "";
-
-		// Check if the cell's letter matches the guess and assign classes accordingly
-		if (guesses[position] === cell.letter) {
-			inputClassNames += " correct"; // Apply 'correct' class to the input for the green background
-		}
-
-		// Add 'sparkle' class to the cell if it is part of a completed word
-		if (sparklingCells[position]) {
-			cellClassNames += " sparkle";
-		}
-
 		if (cell.clue) {
 			const clueColor = getClueColor(clueUrl);
 			cellStyle.borderTop = `1px solid ${clueColor}`;
@@ -194,9 +165,10 @@ const GameBoard = () => {
 					style={cellStyle}></td>
 			);
 		} else {
+			const correct = guesses[position] === cell.letter;
 			return (
 				<td
-					className={cellClassNames}
+					className={correct ? "letter-cell correct" : "letter-cell"}
 					style={cellStyle}>
 					<input
 						ref={(el) => (inputRefs.current[position] = el)}
@@ -205,7 +177,7 @@ const GameBoard = () => {
 						value={guesses[position] || ""}
 						onChange={(e) => handleInputChange(position, e)}
 						onFocus={(e) => e.target.select()}
-						className={inputClassNames}
+						className={correct ? "correct" : ""}
 						disabled={!cell.letter}
 					/>
 				</td>

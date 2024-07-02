@@ -58,3 +58,11 @@ These states allow the game to remember specific aspects of the game's progress 
 
 - **Loading and Saving Guesses**: Automatically load guesses from local storage when the level changes and save them whenever guesses are updated. This ensures that player progress is preserved.
 - **Persistence**: The use of local storage allows the game state to persist between sessions, improving user experience by allowing players to pick up where they left off.
+
+## License
+
+This project and all its content are proprietary and protected under intellectual property laws. Use of the game or its code without explicit permission is strictly prohibited.
+
+For any inquiries regarding licensing or use rights, please contact me directly.
+
+Feel free to reach out if you have any questions or just want to chat about the project. Happy puzzling!

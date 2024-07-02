@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import Confetti from "react-confetti";
+
 import level1 from "./levels/level1";
+
 import level2 from "./levels/level2";
+
 import { getClueColor } from "./utils/getClueColor";
-import { checkWordCompletion } from "./utils/checkWordCompletion";
 
 const GameBoard = () => {
 	const levels = { level1, level2 };
@@ -14,22 +15,6 @@ const GameBoard = () => {
 	const modalRef = useRef(null);
 	const inputRefs = useRef({});
 	const [focusDirection, setFocusDirection] = useState("across");
-	const [confettiActive, setConfettiActive] = useState(false);
-	const [confettiOrigin, setConfettiOrigin] = useState({ x: 0.5, y: 0.5 });
-	const [sparklingCells, setSparklingCells] = useState({});
-
-	// experimenting with DOMTokenList
-	useEffect(() => {
-		const logTokenLists = () => {
-			const cells = document.querySelectorAll(".game-board td"); // Now targeting 'td' instead of 'input'
-			for (let i = 0; i < cells.length && i < 12; i++) {
-				// Ensures it doesn't go out of bounds if there are fewer than 12 cells
-				console.log(`Cell ${i + 1} classes:`, cells[i].classList);
-			}
-		};
-
-		setTimeout(logTokenLists, 500); // Adjust delay as necessary
-	}, []); // Dependency array remains empty to run once after the component mounts
 
 	useEffect(() => {
 		const savedGuesses = localStorage.getItem(`guesses-${currentLevel}`);
@@ -50,47 +35,12 @@ const GameBoard = () => {
 		setGuesses({});
 		inputRefs.current = {};
 	};
+
 	const handleInputChange = (position, event) => {
-		const newGuess = event.target.value.toUpperCase().slice(0, 1);
-		const [rowIndex, colIndex] = position.split("-").map(Number);
-		const correct =
-			levels[currentLevel].grid[rowIndex][colIndex].letter === newGuess;
-
-		setGuesses((prevGuesses) => ({
-			...prevGuesses,
-			[position]: newGuess,
-		}));
-
+		const guess = event.target.value.toUpperCase().slice(0, 1);
+		setGuesses({ ...guesses, [position]: guess });
 		moveFocus(position);
-
-		if (correct) {
-			const wordCompleted = checkWordCompletion(
-				levels[currentLevel].grid,
-				guesses,
-				position
-			);
-			if (wordCompleted) {
-				// Updating the state to trigger sparkle class
-				setSparklingCells((prev) => ({ ...prev, [position]: true }));
-
-				alert(`Word completed at position ${position}!`);
-
-				setTimeout(() => {
-					setSparklingCells((prev) => {
-						const newSparkles = { ...prev };
-						delete newSparkles[position];
-						return newSparkles;
-					});
-				}, 1000);
-			}
-		}
 	};
-
-	function findCompletedWordCells(position, grid) {
-		// This function should return an array of cell positions that form the completed word
-		// This is a placeholder for the logic that would actually find these cells based on the game logic
-		return [{ row: position.split("-")[0], col: position.split("-")[1] }]; // Simplified for example
-	}
 
 	const moveFocus = (currentPosition) => {
 		const [row, col] = currentPosition.split("-").map(Number);
@@ -129,6 +79,7 @@ const GameBoard = () => {
 		}
 		return !levels[currentLevel].grid[row][col].empty;
 	};
+
 	const handleTouchStart = (clueUrl, e) => {
 		e.stopPropagation();
 		setCurrentClueUrl(clueUrl);
@@ -148,20 +99,6 @@ const GameBoard = () => {
 			borderLeft: "1px solid #ccc",
 			borderRight: "1px solid #ccc",
 		};
-
-		// Define the base class name for the cell and input separately
-		let cellClassNames = "letter-cell";
-		let inputClassNames = "";
-
-		// Check if the cell's letter matches the guess and assign classes accordingly
-		if (guesses[position] === cell.letter) {
-			inputClassNames += " correct"; // Apply 'correct' class to the input for the green background
-		}
-
-		// Add 'sparkle' class to the cell if it is part of a completed word
-		if (sparklingCells[position]) {
-			cellClassNames += " sparkle";
-		}
 
 		if (cell.clue) {
 			const clueColor = getClueColor(clueUrl);
@@ -194,9 +131,10 @@ const GameBoard = () => {
 					style={cellStyle}></td>
 			);
 		} else {
+			const correct = guesses[position] === cell.letter;
 			return (
 				<td
-					className={cellClassNames}
+					className={correct ? "letter-cell correct" : "letter-cell"}
 					style={cellStyle}>
 					<input
 						ref={(el) => (inputRefs.current[position] = el)}
@@ -205,7 +143,7 @@ const GameBoard = () => {
 						value={guesses[position] || ""}
 						onChange={(e) => handleInputChange(position, e)}
 						onFocus={(e) => e.target.select()}
-						className={inputClassNames}
+						className={correct ? "correct" : ""}
 						disabled={!cell.letter}
 					/>
 				</td>
@@ -215,12 +153,6 @@ const GameBoard = () => {
 
 	return (
 		<div className="game-container">
-			{confettiActive && (
-				<>
-					{console.log("Confetti origin:", confettiOrigin)}
-					<Confetti origin={confettiOrigin} />
-				</>
-			)}
 			<select
 				className="level-selector"
 				onChange={handleLevelChange}
