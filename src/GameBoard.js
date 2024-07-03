@@ -52,36 +52,36 @@ const GameBoard = () => {
 	};
 	const handleInputChange = (position, event) => {
 		const newGuess = event.target.value.toUpperCase().slice(0, 1);
-		const [rowIndex, colIndex] = position.split("-").map(Number);
-		const correct =
-			levels[currentLevel].grid[rowIndex][colIndex].letter === newGuess;
+		const existingGuess = guesses[position] || "";
 
+		// Update guesses state and move focus regardless of whether the guess is new
 		setGuesses((prevGuesses) => ({
 			...prevGuesses,
 			[position]: newGuess,
 		}));
-
 		moveFocus(position);
 
-		if (correct) {
-			const wordCompleted = checkWordCompletion(
-				levels[currentLevel].grid,
-				guesses,
-				position
-			);
-			if (wordCompleted) {
-				// Updating the state to trigger sparkle class
-				setSparklingCells((prev) => ({ ...prev, [position]: true }));
+		// Check for word completion only when the new input is different and correct
+		if (newGuess !== existingGuess) {
+			const [rowIndex, colIndex] = position.split("-").map(Number);
+			const correct =
+				levels[currentLevel].grid[rowIndex][colIndex].letter === newGuess;
+			if (correct) {
+				const wordCompleted = checkWordCompletion(
+					levels[currentLevel].grid,
+					guesses,
+					position
+				);
+				if (wordCompleted) {
+					// Apply sparkle to the parent <td> if that's your intent
+					const parentCell = event.target.closest("td");
+					parentCell.classList.add("sparkle");
 
-				alert(`Word completed at position ${position}!`);
-
-				setTimeout(() => {
-					setSparklingCells((prev) => {
-						const newSparkles = { ...prev };
-						delete newSparkles[position];
-						return newSparkles;
-					});
-				}, 1000);
+					setTimeout(() => {
+						parentCell.classList.remove("sparkle");
+						console.log("Sparkle class removed"); // Check if class is removed after delay
+					}, 10000); // Extended time for testing
+				}
 			}
 		}
 	};
