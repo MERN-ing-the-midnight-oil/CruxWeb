@@ -1,53 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import GameBoard from "./GameBoard";
 
+// Introduction modal component
+const IntroductionModal = ({ onDismiss }) => {
+	const [isVisible, setIsVisible] = useState(true);
+
+	const handleDismiss = () => {
+		setIsVisible(false);
+		onDismiss();
+	};
+
+	useEffect(() => {
+		setIsVisible(true);
+	}, []);
+
+	if (!isVisible) return null;
+
+	return (
+		<div className="modal-overlay">
+			<div className="modal-content">
+				<h2 style={{ textAlign: "center", fontWeight: "bold" }}>
+					Welcome to Crux!
+				</h2>
+				<p>
+					Tap on the colorful cells to see clues for the adjacent words. Each
+					clue is related to all adjacent words. Guess the words by typing
+					letters into the white squares. Correct letters will turn green. Good
+					luck!
+				</p>
+				<div style={{ textAlign: "center" }}>
+					<button onClick={handleDismiss}>Got It!</button>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 function App() {
+	const [showModal, setShowModal] = useState(true);
+
+	const handleModalDismiss = () => {
+		setShowModal(false);
+	};
+
 	return (
 		<div className="app-container">
 			<h1 className="app-title">Crux</h1>
-			<p className="app-instructions">
-				Welcome to Crux! The crossword game with a dash of{" "}
-				<a
-					href="https://boardgamegeek.com/boardgame/39856/dixit"
-					target="_blank"
-					rel="noopener noreferrer"
-					style={{ color: "blue" }}>
-					Dixit
-				</a>{" "}
-				and a sprinkle of{" "}
-				<a
-					href="https://boardgamegeek.com/boardgame/181304/mysterium"
-					target="_blank"
-					rel="noopener noreferrer"
-					style={{ color: "blue" }}>
-					Mysterium
-				</a>
-				. Click on the colored areas to see picture clues that somehow pertain
-				to all adjacent words. Type your solutions into the white squares.
-				Correct letters will turn the grid square from white to green. Good
-				luck!
-			</p>
+			{showModal && <IntroductionModal onDismiss={handleModalDismiss} />}
+
 			<GameBoard />
-			<p className="attribution">
-				Designed and developed by{" "}
-				<a
-					href="https://www.linkedin.com/in/rhys-smoker/"
-					target="_blank"
-					rel="noopener noreferrer"
-					style={{ color: "blue" }}>
-					Rhys Smoker
-				</a>
-			</p>
-			<p>
-				Show the{" "}
-				<a
-					href={`${process.env.PUBLIC_URL}/images/QR_Code.png`}
-					target="_blank">
-					QR code link
-				</a>{" "}
-				to this page
-			</p>
 		</div>
 	);
 }
