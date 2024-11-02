@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import Confetti from "react-confetti";
 import cliches from "./levels/cliches";
 import easylevel from "./levels/easylevel";
-import homophones from "./levels/homophones";
 import colorsandshapes from "./levels/colorsandshapes";
+import homophones from "./levels/homophones";
 import { getClueColor } from "./utils/getClueColor";
 import { checkWordCompletion } from "./utils/checkWordCompletion";
 
 const GameBoard = () => {
-	const levels = { cliches, easylevel, homophones, colorsandshapes };
-	const [currentLevel, setCurrentLevel] = useState("easylevel");
+	const levels = { cliches, easylevel, colorsandshapes, homophones };
+	const [currentLevel, setCurrentLevel] = useState("easylevel"); // Default to easylevel
 	const [guesses, setGuesses] = useState({});
 	const [showClueModal, setShowClueModal] = useState(false);
 	const [currentClueUrl, setCurrentClueUrl] = useState("");
@@ -17,6 +17,7 @@ const GameBoard = () => {
 	const inputRefs = useRef({});
 	const [focusDirection, setFocusDirection] = useState("across");
 	const [confettiActive, setConfettiActive] = useState(false);
+	const [confettiOrigin, setConfettiOrigin] = useState({ x: 0.5, y: 0.5 });
 	const [sparklingCells, setSparklingCells] = useState({});
 
 	useEffect(() => {
@@ -29,7 +30,8 @@ const GameBoard = () => {
 	}, [currentLevel]);
 
 	useEffect(() => {
-		localStorage.setItem(`guesses-${currentLevel}`, JSON.stringify(guesses));
+		const savedGuesses = JSON.stringify(guesses);
+		localStorage.setItem(`guesses-${currentLevel}`, savedGuesses);
 	}, [guesses, currentLevel]);
 
 	const handleLevelChange = (event) => {
@@ -38,30 +40,38 @@ const GameBoard = () => {
 		inputRefs.current = {};
 	};
 
+	const handleEraseAll = () => {
+		setGuesses({});
+		localStorage.removeItem(`guesses-${currentLevel}`);
+	};
+
 	const handleInputChange = (position, event) => {
 		const newGuess = event.target.value.toUpperCase().slice(0, 1);
+		const existingGuess = guesses[position] || "";
 		setGuesses((prevGuesses) => ({
 			...prevGuesses,
 			[position]: newGuess,
 		}));
 		moveFocus(position);
 
-		const [rowIndex, colIndex] = position.split("-").map(Number);
-		const correct =
-			levels[currentLevel].grid[rowIndex][colIndex].letter === newGuess;
-		if (correct) {
-			const wordCompleted = checkWordCompletion(
-				levels[currentLevel].grid,
-				guesses,
-				position
-			);
-			if (wordCompleted) {
-				const parentCell = event.target.closest("td");
-				parentCell.classList.add("sparkle");
+		if (newGuess !== existingGuess) {
+			const [rowIndex, colIndex] = position.split("-").map(Number);
+			const correct =
+				levels[currentLevel].grid[rowIndex][colIndex].letter === newGuess;
+			if (correct) {
+				const wordCompleted = checkWordCompletion(
+					levels[currentLevel].grid,
+					guesses,
+					position
+				);
+				if (wordCompleted) {
+					const parentCell = event.target.closest("td");
+					parentCell.classList.add("sparkle");
 
-				setTimeout(() => {
-					parentCell.classList.remove("sparkle");
-				}, 1000);
+					setTimeout(() => {
+						parentCell.classList.remove("sparkle");
+					}, 10000);
+				}
 			}
 		}
 	};
@@ -86,13 +96,21 @@ const GameBoard = () => {
 	};
 
 	const getNextPosition = (row, col, direction) => {
-		return direction === "across" ? `${row}-${col + 1}` : `${row + 1}-${col}`;
+		if (direction === "across") {
+			return `${row}-${col + 1}`;
+		} else {
+			return `${row + 1}-${col}`;
+		}
 	};
 
 	const isPositionValid = (position) => {
 		const [row, col] = position.split("-").map(Number);
-		if (row >= levels[currentLevel].grid.length || row < 0) return false;
-		if (col >= levels[currentLevel].grid[row].length || col < 0) return false;
+		if (row >= levels[currentLevel].grid.length || row < 0) {
+			return false;
+		}
+		if (col >= levels[currentLevel].grid[row].length || col < 0) {
+			return false;
+		}
 		return !levels[currentLevel].grid[row][col].empty;
 	};
 
@@ -110,28 +128,32 @@ const GameBoard = () => {
 	const renderCell = (cell, rowIndex, colIndex) => {
 		const position = `${rowIndex}-${colIndex}`;
 		const clueUrl = cell.clue ? levels[currentLevel].clues[cell.clue] : null;
-		let cellStyle = { border: "1px solid grey" };
+		let cellStyle = {
+			border: "1px solid grey",
+		};
+
 		let cellClassNames = "letter-cell";
 		let inputClassNames = "";
 
 		if (guesses[position] === cell.letter) {
 			inputClassNames += " correct";
 		}
+
 		if (sparklingCells[position]) {
 			cellClassNames += " sparkle";
 		}
 
 		if (cell.clue) {
 			const clueColor = getClueColor(clueUrl);
-			cellStyle = {
-				...cellStyle,
-				backgroundColor: clueColor,
-				border: `1px solid ${clueColor}`,
-			};
+			cellStyle.borderTop = `1px solid ${clueColor}`;
+			cellStyle.borderBottom = `1px solid ${clueColor}`;
+			cellStyle.borderLeft = `1px solid ${clueColor}`;
+			cellStyle.borderRight = `1px solid ${clueColor}`;
+
 			return (
 				<td
 					className="clue-cell"
-					style={cellStyle}
+					style={{ backgroundColor: clueColor, ...cellStyle }}
 					onTouchStart={(e) => handleTouchStart(clueUrl, e)}
 					onTouchEnd={handleTouchEnd}
 					onMouseDown={(e) => {
@@ -173,27 +195,22 @@ const GameBoard = () => {
 
 	return (
 		<div className="game-container">
-			{confettiActive && <Confetti />}
+			{confettiActive && <Confetti origin={confettiOrigin} />}
 			<div className="picker-container">
 				<select
+					className="level-selector"
 					onChange={handleLevelChange}
 					value={currentLevel}>
-					{Object.keys(levels).map((level) => (
+					{Object.keys(levels).map((levelKey) => (
 						<option
-							key={level}
-							value={level}>
-							{levels[level].pickerLabel}
+							key={levelKey}
+							value={levelKey}>
+							{levels[levelKey].pickerLabel}
 						</option>
 					))}
 				</select>
 			</div>
 			<h1>{levels[currentLevel].title}</h1>
-			{levels[currentLevel].secondaryTitle && (
-				<h3 className="secondary-title">
-					{levels[currentLevel].secondaryTitle}
-				</h3>
-			)}
-
 			<table className="game-board">
 				<tbody>
 					{levels[currentLevel].grid.map((row, rowIndex) => (
@@ -205,6 +222,8 @@ const GameBoard = () => {
 					))}
 				</tbody>
 			</table>
+
+			{/* Clue Modal */}
 			{showClueModal && (
 				<div
 					ref={modalRef}
@@ -225,6 +244,36 @@ const GameBoard = () => {
 					/>
 				</div>
 			)}
+
+			{/* Control Buttons and QR Code */}
+			<div className="button-group">
+				<button
+					onClick={handleEraseAll}
+					className="control-button">
+					Erase All
+				</button>
+				<a
+					href="https://apps.apple.com/us/app/alpha-crux/id6641026804"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="control-button">
+					Crux on iOS
+				</a>
+				<a
+					href="https://www.linkedin.com/in/rhys-smoker/"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="control-button">
+					About Me
+				</a>
+			</div>
+
+			{/* QR Code */}
+			<img
+				src={`${process.env.PUBLIC_URL}/QRCode.png`}
+				alt="QR Code"
+				className="qr-code-image"
+			/>
 		</div>
 	);
 };

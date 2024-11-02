@@ -121,3 +121,48 @@
   transform: scale(1.05); /* Slightly enlarges button on hover */
   background-color: #45a049; /* Darkens button on hover */
 }
+
+.erase-all-button {
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  margin-top: 10px;
+  background-color: #ddd;
+  color: #333;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.erase-all-button:hover {
+  background-color: #ccc;
+  border-color: #888;
+}.button-group {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 20px;
+	padding: 10px 0;
+}
+
+.control-button {
+	font-size: 0.9rem;
+	padding: 12px 20px;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+	background-color: #4caf50;
+	color: white;
+	transition: background-color 0.3s ease;
+	text-align: center;
+}
+
+.control-button:hover {
+	background-color: #45a049;
+}
+
+.qr-code {
+	display: block;
+	margin: 15px auto;
+	width: 150px;
+	height: auto;
+}
