@@ -3,9 +3,8 @@ import { createGridFromVisual } from "../utils/createGridFromVisual";
 
 const levelId = "cliches";
 const title = `"Don't count your clichés before they hatch."`;
-const secondaryTitle =
-	"Try to uncover words using clues related to common phrases.";
-const pickerLabel = "Clichés";
+const secondaryTitle = "";
+const pickerLabel = "Level 1";
 
 const visualGrid = [
 	[["##"], ["##"], ["##"], ["##"], ["##"], ["##"]],

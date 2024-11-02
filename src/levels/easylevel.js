@@ -4,7 +4,7 @@ import { createGridFromVisual } from "../utils/createGridFromVisual";
 const levelId = "easylevel";
 const title = `"Getting Started"`;
 const secondaryTitle =
-	"Begin by identifying common elements between clues and filling in letters.";
+	"Hint: the common element between the first two clues is `yellow`";
 const pickerLabel = "Tutorial";
 
 const visualGrid = [

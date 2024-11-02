@@ -110,7 +110,7 @@ const GameBoard = () => {
 	const renderCell = (cell, rowIndex, colIndex) => {
 		const position = `${rowIndex}-${colIndex}`;
 		const clueUrl = cell.clue ? levels[currentLevel].clues[cell.clue] : null;
-		let cellStyle = { border: "1px solid #d018bd" };
+		let cellStyle = { border: "1px solid grey" };
 		let cellClassNames = "letter-cell";
 		let inputClassNames = "";
 
@@ -188,6 +188,12 @@ const GameBoard = () => {
 				</select>
 			</div>
 			<h1>{levels[currentLevel].title}</h1>
+			{levels[currentLevel].secondaryTitle && (
+				<h3 className="secondary-title">
+					{levels[currentLevel].secondaryTitle}
+				</h3>
+			)}
+
 			<table className="game-board">
 				<tbody>
 					{levels[currentLevel].grid.map((row, rowIndex) => (
