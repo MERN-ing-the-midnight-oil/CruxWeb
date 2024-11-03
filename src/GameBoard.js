@@ -154,18 +154,27 @@ const GameBoard = () => {
 				<td
 					className="clue-cell"
 					style={{ backgroundColor: clueColor, ...cellStyle }}
-					onTouchStart={(e) => handleTouchStart(clueUrl, e)}
-					onTouchEnd={handleTouchEnd}
+					onTouchStart={(e) => {
+						e.preventDefault(); // Prevent default touch behavior
+						handleTouchStart(clueUrl, e);
+					}}
+					onTouchEnd={(e) => {
+						e.preventDefault(); // Prevent default touch end behavior
+						handleTouchEnd(e);
+					}}
 					onMouseDown={(e) => {
+						e.preventDefault(); // Prevent default mouse down behavior
 						e.stopPropagation();
 						setCurrentClueUrl(clueUrl);
 						setShowClueModal(true);
 					}}
 					onMouseUp={(e) => {
+						e.preventDefault(); // Prevent default mouse up behavior
 						e.stopPropagation();
 						setShowClueModal(false);
 					}}
-					onContextMenu={(e) => e.preventDefault()}></td>
+					onContextMenu={(e) => e.preventDefault()} // Prevent long-press context menu on mobile
+				></td>
 			);
 		} else if (cell.empty) {
 			return (
