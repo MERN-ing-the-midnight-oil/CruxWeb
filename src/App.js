@@ -21,7 +21,7 @@ const IntroductionModal = ({ onDismiss }) => {
 		<div className="modal-overlay">
 			<div className="modal-content">
 				<h2 style={{ textAlign: "center", fontWeight: "bold" }}>
-					Welcome to Crux!
+					Welcome to Crux!!
 				</h2>
 				<p>
 					Tap on the colorful cells to see clues for the adjacent words. Each
