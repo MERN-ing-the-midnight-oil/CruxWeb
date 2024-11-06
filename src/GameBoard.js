@@ -220,7 +220,6 @@ const GameBoard = () => {
 					))}
 				</tbody>
 			</table>
-			// Render the modal with both onClick and onTouchEnd for closing
 			{showClueModal && (
 				<div
 					className="modal-backdrop"
