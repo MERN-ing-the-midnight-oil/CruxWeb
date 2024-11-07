@@ -2,7 +2,7 @@ import { createCluePaths } from "../utils/cluePathGenerator";
 import { createGridFromVisual } from "../utils/createGridFromVisual";
 const levelId = "homophones";
 const title = `"Same-same but different"`;
-const secondaryTitle = "Identify homophones through context and clues.";
+const secondaryTitle = "";
 const pickerLabel = "Level 2";
 
 const visualGrid = [

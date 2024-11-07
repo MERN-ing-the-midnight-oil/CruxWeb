@@ -209,6 +209,8 @@ const GameBoard = () => {
 				</select>
 			</div>
 			<h1>{levels[currentLevel].title}</h1>
+			<h2 className="secondary-title">{levels[currentLevel].secondaryTitle}</h2>
+
 			<table className="game-board">
 				<tbody>
 					{levels[currentLevel].grid.map((row, rowIndex) => (
@@ -269,7 +271,7 @@ const GameBoard = () => {
 					target="_blank"
 					rel="noopener noreferrer"
 					className="control-button">
-					About Me
+					Hire Me
 				</a>
 			</div>
 			<img
@@ -277,6 +279,15 @@ const GameBoard = () => {
 				alt="QR Code"
 				className="qr-code"
 			/>
+			<p
+				style={{
+					textAlign: "center",
+					marginTop: "10px",
+					fontSize: "1rem",
+					color: "#333",
+				}}>
+				Scan to Visit/Share
+			</p>
 		</div>
 	);
 };

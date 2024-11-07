@@ -46,7 +46,7 @@ function App() {
 
 	return (
 		<div className="app-container">
-			<h1 className="app-title">Crux</h1>
+			<h1 className="app-title">Alpha Crux</h1>
 			{showModal && <IntroductionModal onDismiss={handleModalDismiss} />}
 
 			<GameBoard />
