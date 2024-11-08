@@ -184,3 +184,8 @@
   width: 150px;
   height: auto;
 }
+
+/* Prevent text selection for the whole table */
+.game-board {
+  user-select: none;
+}

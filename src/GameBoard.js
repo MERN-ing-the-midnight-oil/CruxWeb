@@ -1,4 +1,3 @@
-// GameBoard.js
 import React, { useState, useRef, useEffect } from "react";
 import Confetti from "react-confetti";
 import cliches from "./levels/cliches";
@@ -14,10 +13,8 @@ const GameBoard = () => {
 	const [guesses, setGuesses] = useState({});
 	const [showClueModal, setShowClueModal] = useState(false);
 	const [currentClueUrl, setCurrentClueUrl] = useState("");
-	const [currentClueKey, setCurrentClueKey] = useState("");
-	const modalRef = useRef(null);
+	const [modalClueColor, setModalClueColor] = useState(""); // State to store the modal color
 	const inputRefs = useRef({});
-	const [focusDirection, setFocusDirection] = useState("across");
 	const [confettiActive, setConfettiActive] = useState(false);
 	const [confettiOrigin, setConfettiOrigin] = useState({ x: 0.5, y: 0.5 });
 	const [sparklingCells, setSparklingCells] = useState({});
@@ -38,72 +35,24 @@ const GameBoard = () => {
 		localStorage.setItem(`guesses-${currentLevel}`, savedGuesses);
 	}, [guesses, currentLevel]);
 
-	// Prevent default touch behavior when modal is open
-	useEffect(() => {
-		const handleGlobalTouchStart = (e) => {
-			if (showClueModal) e.preventDefault();
-		};
-		document.addEventListener("touchstart", handleGlobalTouchStart, {
-			passive: false,
-		});
-		return () => {
-			document.removeEventListener("touchstart", handleGlobalTouchStart);
-		};
-	}, [showClueModal]);
-
 	const handleLevelChange = (event) => {
 		setCurrentLevel(event.target.value);
 		setGuesses({});
 		inputRefs.current = {};
 	};
 
-	const handleEraseAll = () => {
-		setGuesses({});
-		localStorage.removeItem(`guesses-${currentLevel}`);
-	};
-
 	const handleInputChange = (position, event) => {
 		const newGuess = event.target.value.toUpperCase().slice(0, 1);
-		const existingGuess = guesses[position] || "";
 		setGuesses((prevGuesses) => ({
 			...prevGuesses,
 			[position]: newGuess,
 		}));
 		moveFocus(position);
-
-		if (newGuess !== existingGuess) {
-			const [rowIndex, colIndex] = position.split("-").map(Number);
-			const correct =
-				levels[currentLevel].grid[rowIndex][colIndex].letter === newGuess;
-			if (correct) {
-				const wordCompleted = checkWordCompletion(
-					levels[currentLevel].grid,
-					guesses,
-					position
-				);
-				if (wordCompleted) {
-					const parentCell = event.target.closest("td");
-					parentCell.classList.add("sparkle");
-					setTimeout(() => {
-						parentCell.classList.remove("sparkle");
-					}, 10000);
-				}
-			}
-		}
 	};
 
 	const moveFocus = (currentPosition) => {
 		const [row, col] = currentPosition.split("-").map(Number);
-		let nextPosition = getNextPosition(row, col, focusDirection);
-		if (!isPositionValid(nextPosition)) {
-			const newDirection = focusDirection === "across" ? "down" : "across";
-			nextPosition = getNextPosition(row, col, newDirection);
-			if (isPositionValid(nextPosition)) {
-				setFocusDirection(newDirection);
-			} else {
-				return;
-			}
-		}
+		let nextPosition = getNextPosition(row, col, "across");
 		if (inputRefs.current[nextPosition]) {
 			inputRefs.current[nextPosition].focus();
 		}
@@ -113,45 +62,27 @@ const GameBoard = () => {
 		return direction === "across" ? `${row}-${col + 1}` : `${row + 1}-${col}`;
 	};
 
-	const isPositionValid = (position) => {
-		const [row, col] = position.split("-").map(Number);
-		if (row >= levels[currentLevel].grid.length || row < 0) return false;
-		if (col >= levels[currentLevel].grid[row].length || col < 0) return false;
-		return !levels[currentLevel].grid[row][col].empty;
-	};
-
-	// Toggle modal state on clue cell click
-	const toggleClueModal = (clueUrl, clueKey) => {
+	const toggleClueModal = (clueUrl, clueColor) => {
 		if (showClueModal) {
-			// Close modal if it's already open
+			// Close the modal
 			setShowClueModal(false);
 			setCurrentClueUrl("");
-			setCurrentClueKey("");
+			setModalClueColor(""); // Reset modal color
 		} else {
-			// Open modal with new clue
+			// Open the modal with the provided clue URL and color
 			setCurrentClueUrl(clueUrl);
-			setCurrentClueKey(clueKey);
 			setShowClueModal(true);
+			setModalClueColor(clueColor); // Set modal color from the clicked cell
 		}
 	};
 
-	// Render each cell, including clue cells with the modal toggle functionality
 	const renderCell = (cell, rowIndex, colIndex) => {
 		const position = `${rowIndex}-${colIndex}`;
 		const clueUrl = cell.clue ? levels[currentLevel].clues[cell.clue] : null;
+		const clueColor = cell.clue ? getClueColor(cell.clue) : null;
 		let cellStyle = { border: "1px solid grey" };
-		let cellClassNames = "letter-cell";
-		let inputClassNames = "";
-
-		if (guesses[position] === cell.letter) {
-			inputClassNames += " correct";
-		}
-		if (sparklingCells[position]) {
-			cellClassNames += " sparkle";
-		}
 
 		if (cell.clue) {
-			const clueColor = getClueColor(clueUrl);
 			cellStyle.backgroundColor = clueColor;
 
 			return (
@@ -159,8 +90,8 @@ const GameBoard = () => {
 					key={position}
 					className="clue-cell"
 					style={cellStyle}
-					onClick={() => toggleClueModal(clueUrl, cell.clue)}
-					onContextMenu={(e) => e.preventDefault()} // Prevent long-press context menu on mobile
+					onMouseDown={() => toggleClueModal(clueUrl, clueColor)}
+					onContextMenu={(e) => e.preventDefault()} // Prevent context menu
 				></td>
 			);
 		} else if (cell.empty) {
@@ -174,7 +105,7 @@ const GameBoard = () => {
 			return (
 				<td
 					key={position}
-					className={cellClassNames}
+					className="letter-cell"
 					style={cellStyle}>
 					<input
 						ref={(el) => (inputRefs.current[position] = el)}
@@ -183,7 +114,7 @@ const GameBoard = () => {
 						value={guesses[position] || ""}
 						onChange={(e) => handleInputChange(position, e)}
 						onFocus={(e) => e.target.select()}
-						className={inputClassNames}
+						className={guesses[position] === cell.letter ? "correct" : ""}
 						disabled={!cell.letter}
 					/>
 				</td>
@@ -209,8 +140,11 @@ const GameBoard = () => {
 				</select>
 			</div>
 			<h1>{levels[currentLevel].title}</h1>
-			<h2 className="secondary-title">{levels[currentLevel].secondaryTitle}</h2>
-
+			{levels[currentLevel].secondaryTitle && (
+				<h2 className="secondary-title">
+					{levels[currentLevel].secondaryTitle}
+				</h2>
+			)}
 			<table className="game-board">
 				<tbody>
 					{levels[currentLevel].grid.map((row, rowIndex) => (
@@ -222,28 +156,28 @@ const GameBoard = () => {
 					))}
 				</tbody>
 			</table>
+
 			{showClueModal && (
 				<div
 					className="modal-backdrop"
-					onMouseDown={() => {
-						console.log("Backdrop mouse down"); // Log for mouse down event
-						setShowClueModal(false);
-					}}
-					onTouchStart={() => {
-						console.log("Backdrop touched (onTouchStart)"); // Log for mobile touch start
-						setShowClueModal(false);
-					}}>
+					onMouseDown={() => setShowClueModal(false)}
+					onTouchStart={() => setShowClueModal(false)}>
 					<div
 						className="modal-content"
-						onClick={(e) => {
-							e.stopPropagation();
-							console.log("Modal content clicked - propagation stopped");
+						style={{
+							borderColor: modalClueColor,
+							backgroundColor: modalClueColor,
+						}}
+						onClick={() => {
+							// Allow clicking on the modal content to close it if needed
+							console.log("Modal content clicked - closing modal");
+							setShowClueModal(false);
 						}}
 						onTouchStart={(e) => {
-							e.stopPropagation();
-							console.log("Modal content touch start - propagation stopped");
-						}}
-						style={{ borderColor: getClueColor(currentClueKey) }}>
+							// Remove the stopPropagation to let touch trigger modal closing
+							console.log("Modal content touched - closing modal");
+							setShowClueModal(false);
+						}}>
 						<img
 							src={currentClueUrl}
 							alt="Clue"
@@ -253,41 +187,6 @@ const GameBoard = () => {
 					</div>
 				</div>
 			)}
-			<div className="button-group">
-				<button
-					onClick={handleEraseAll}
-					className="control-button">
-					Erase All
-				</button>
-				<a
-					href="https://apps.apple.com/us/app/alpha-crux/id6641026804"
-					target="_blank"
-					rel="noopener noreferrer"
-					className="control-button">
-					Crux on iOS
-				</a>
-				<a
-					href="https://www.linkedin.com/in/rhys-smoker/"
-					target="_blank"
-					rel="noopener noreferrer"
-					className="control-button">
-					Hire Me
-				</a>
-			</div>
-			<img
-				src={`${process.env.PUBLIC_URL}/QRCode.png`}
-				alt="QR Code"
-				className="qr-code"
-			/>
-			<p
-				style={{
-					textAlign: "center",
-					marginTop: "10px",
-					fontSize: "1rem",
-					color: "#333",
-				}}>
-				Scan to Visit/Share
-			</p>
 		</div>
 	);
 };

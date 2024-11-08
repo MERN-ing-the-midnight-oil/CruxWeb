@@ -1,7 +1,7 @@
 import { createCluePaths } from "../utils/cluePathGenerator";
 import { createGridFromVisual } from "../utils/createGridFromVisual";
 const levelId = "homophones";
-const title = `"Same-same but different"`;
+const title = `"Hear here"`;
 const secondaryTitle = "";
 const pickerLabel = "Level 2";
 
