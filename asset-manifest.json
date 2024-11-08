@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/CruxWeb/static/css/main.2475fda3.css",
-    "main.js": "/CruxWeb/static/js/main.a076cdb5.js",
+    "main.css": "/CruxWeb/static/css/main.581825e0.css",
+    "main.js": "/CruxWeb/static/js/main.3bf95325.js",
     "static/js/453.dce036b7.chunk.js": "/CruxWeb/static/js/453.dce036b7.chunk.js",
     "index.html": "/CruxWeb/index.html",
-    "main.2475fda3.css.map": "/CruxWeb/static/css/main.2475fda3.css.map",
-    "main.a076cdb5.js.map": "/CruxWeb/static/js/main.a076cdb5.js.map",
+    "main.581825e0.css.map": "/CruxWeb/static/css/main.581825e0.css.map",
+    "main.3bf95325.js.map": "/CruxWeb/static/js/main.3bf95325.js.map",
     "453.dce036b7.chunk.js.map": "/CruxWeb/static/js/453.dce036b7.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2475fda3.css",
-    "static/js/main.a076cdb5.js"
+    "static/css/main.581825e0.css",
+    "static/js/main.3bf95325.js"
   ]
 }
