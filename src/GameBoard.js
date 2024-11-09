@@ -168,16 +168,8 @@ const GameBoard = () => {
 							borderColor: modalClueColor,
 							backgroundColor: modalClueColor,
 						}}
-						onClick={() => {
-							// Allow clicking on the modal content to close it if needed
-							console.log("Modal content clicked - closing modal");
-							setShowClueModal(false);
-						}}
-						onTouchStart={(e) => {
-							// Remove the stopPropagation to let touch trigger modal closing
-							console.log("Modal content touched - closing modal");
-							setShowClueModal(false);
-						}}>
+						onClick={() => setShowClueModal(false)}
+						onTouchStart={() => setShowClueModal(false)}>
 						<img
 							src={currentClueUrl}
 							alt="Clue"
@@ -187,6 +179,39 @@ const GameBoard = () => {
 					</div>
 				</div>
 			)}
+
+			<div className="qr-container">
+				<img
+					src={`${process.env.PUBLIC_URL}/QRCode.png`}
+					alt="QR Code"
+					className="qr-code"
+				/>
+				<p
+					style={{
+						textAlign: "center",
+						marginTop: "10px",
+						fontSize: "1rem",
+						color: "#333",
+					}}>
+					Scan to Visit
+				</p>
+			</div>
+			<div className="button-group">
+				<a
+					href="https://apps.apple.com/us/app/alpha-crux/id6641026804"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="control-button">
+					Crux on iOS
+				</a>
+				<a
+					href="https://www.linkedin.com/in/rhys-smoker/"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="control-button">
+					Hire Me
+				</a>
+			</div>
 		</div>
 	);
 };
