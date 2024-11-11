@@ -4,7 +4,7 @@ import { createGridFromVisual } from "../utils/createGridFromVisual";
 const levelId = "easylevel";
 const title = `"Getting Started"`;
 const secondaryTitle =
-	"The first word across is `Y-E-L-L-O-W` because the cat and the wolf clues both have that in common";
+	"The first word across is `Y-E-L-L-O-W` because the cat and the wolf clues share that visual element.";
 const pickerLabel = "Tutorial";
 
 const visualGrid = [
