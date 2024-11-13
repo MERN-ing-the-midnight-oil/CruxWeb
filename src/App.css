@@ -6,7 +6,7 @@
   justify-content: center;
   padding: 20px;
   font-family: 'Arial', sans-serif;
-  background-color: #f0f0f0;
+  background-color: lightgray;
 }
 
 /* Title and Instructions */
@@ -30,20 +30,14 @@
 
 /* Game Board */
 .game-board td {
-  border: 1px solid #999;
+  border: 1px solid gray;
   text-align: center;
   vertical-align: middle;
-  width: 50px; /* Adjust based on your design */
-  height: 50px; /* Match width to keep it square */
+  width: 50px;
+  height: 50px;
   position: relative;
   overflow: hidden;
-  box-sizing: border-box; /* Ensure consistent sizing */
-}
-
-/* Ensure the table cell (td) maintains boundaries */
-.game-board td {
-  position: relative; /* Make td control its children's boundaries */
-  overflow: hidden; /* Prevent content from spilling over */
+  box-sizing: border-box;
 }
 
 /* Cells Styling */
@@ -52,8 +46,8 @@
 }
 
 .letter-cell input {
-  width: 100%; /* Fully occupies the cell */
-  height: 100%; /* Matches the cell height */
+  width: 100%;
+  height: 100%;
   border: none;
   background-color: transparent;
   text-align: center;
@@ -66,33 +60,33 @@
 }
 
 .letter-cell input.correct {
-  background-color: lightgreen; /* Make sure this is confined to input */
-  padding: 0; /* Ensure no padding pushes color out */
-  margin: 0; /* Remove any margin */
+  background-color: lightgreen;
+  padding: 0;
+  margin: 0;
 }
+
 .empty-cell {
-  background-color: rgb(39, 39, 39);
+  background-color: black;
 }
 
 .clue-cell {
   color: white;
   cursor: pointer;
-  background-color: #d9d9d9;
+  background-color: lightgray;
 }
 
 /* Modal Styling */
-/* CSS adjustments for modal backdrop and content */
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent backdrop */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* Ensure the backdrop is beneath the content */
+  z-index: 1000;
 }
 
 .modal-content {
@@ -103,9 +97,8 @@
   max-width: 90%;
   max-height: 90%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  z-index: 1001; /* Ensure modal content is above the backdrop */
+  z-index: 1001;
 }
-
 
 .modal-image {
   width: 100%;
@@ -158,23 +151,23 @@
 }
 
 .control-button {
-  background-color: #4caf50;
+  background-color: green;
   color: white;
 }
 
 .control-button:hover {
-  background-color: #45a049;
+  background-color: darkgreen;
 }
 
 .erase-all-button {
-  background-color: #ddd;
-  color: #333;
-  border: 1px solid #aaa;
+  background-color: gainsboro;
+  color: black;
+  border: 1px solid gray;
 }
 
 .erase-all-button:hover {
-  background-color: #ccc;
-  border-color: #888;
+  background-color: lightgray;
+  border-color: dimgray;
 }
 
 /* QR Code */
@@ -188,4 +181,31 @@
 /* Prevent text selection for the whole table */
 .game-board {
   user-select: none;
+}
+
+/* High Contrast Mode Styling */
+@media (prefers-contrast: high) {
+  .letter-cell {
+    background-color: white;
+    color: black;
+  }
+  .clue-cell {
+    background-color: gray;
+    color: white;
+  }
+  .empty-cell {
+    background-color: black;
+  }
+  .modal-content {
+    background-color: white;
+    color: black;
+  }
+  .control-button {
+    background-color: green;
+    color: white;
+  }
+  .erase-all-button {
+    background-color: gray;
+    color: black;
+  }
 }
