@@ -13,8 +13,9 @@ const GameBoard = () => {
 	const [guesses, setGuesses] = useState({});
 	const [showClueModal, setShowClueModal] = useState(false);
 	const [currentClueUrl, setCurrentClueUrl] = useState("");
-	const [modalClueColor, setModalClueColor] = useState(""); // State to store the modal color
+	const [modalClueColor, setModalClueColor] = useState("");
 	const inputRefs = useRef({});
+	const [focusDirection, setFocusDirection] = useState("across"); // Track focus direction
 	const [confettiActive, setConfettiActive] = useState(false);
 	const [confettiOrigin, setConfettiOrigin] = useState({ x: 0.5, y: 0.5 });
 	const [sparklingCells, setSparklingCells] = useState({});
@@ -47,14 +48,41 @@ const GameBoard = () => {
 			...prevGuesses,
 			[position]: newGuess,
 		}));
+
+		// Set focus direction based on word type (horizontal or vertical)
+		const [row, col] = position.split("-").map(Number);
+		const isVertical = checkIfWordIsVertical(row, col);
+		setFocusDirection(isVertical ? "down" : "across");
+
 		moveFocus(position);
 	};
 
 	const moveFocus = (currentPosition) => {
 		const [row, col] = currentPosition.split("-").map(Number);
-		let nextPosition = getNextPosition(row, col, "across");
-		if (inputRefs.current[nextPosition]) {
-			inputRefs.current[nextPosition].focus();
+
+		let nextPosition;
+		if (focusDirection === "across") {
+			nextPosition = getNextPosition(row, col, "across");
+			if (inputRefs.current[nextPosition]) {
+				inputRefs.current[nextPosition].focus();
+			} else {
+				nextPosition = getNextPosition(row, col, "down");
+				if (inputRefs.current[nextPosition]) {
+					inputRefs.current[nextPosition].focus();
+					setFocusDirection("down");
+				}
+			}
+		} else if (focusDirection === "down") {
+			nextPosition = getNextPosition(row, col, "down");
+			if (inputRefs.current[nextPosition]) {
+				inputRefs.current[nextPosition].focus();
+			} else {
+				nextPosition = getNextPosition(row, col, "across");
+				if (inputRefs.current[nextPosition]) {
+					inputRefs.current[nextPosition].focus();
+					setFocusDirection("across");
+				}
+			}
 		}
 	};
 
@@ -62,17 +90,19 @@ const GameBoard = () => {
 		return direction === "across" ? `${row}-${col + 1}` : `${row + 1}-${col}`;
 	};
 
+	const checkIfWordIsVertical = (row, col) => {
+		return levels[currentLevel].grid[row][col].verticalWord === true;
+	};
+
 	const toggleClueModal = (clueUrl, clueColor) => {
 		if (showClueModal) {
-			// Close the modal
 			setShowClueModal(false);
 			setCurrentClueUrl("");
-			setModalClueColor(""); // Reset modal color
+			setModalClueColor("");
 		} else {
-			// Open the modal with the provided clue URL and color
 			setCurrentClueUrl(clueUrl);
 			setShowClueModal(true);
-			setModalClueColor(clueColor); // Set modal color from the clicked cell
+			setModalClueColor(clueColor);
 		}
 	};
 
@@ -91,8 +121,7 @@ const GameBoard = () => {
 					className="clue-cell"
 					style={cellStyle}
 					onMouseDown={() => toggleClueModal(clueUrl, clueColor)}
-					onContextMenu={(e) => e.preventDefault()} // Prevent context menu
-				></td>
+					onContextMenu={(e) => e.preventDefault()}></td>
 			);
 		} else if (cell.empty) {
 			return (
