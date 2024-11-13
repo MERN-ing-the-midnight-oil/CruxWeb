@@ -151,6 +151,23 @@ const GameBoard = () => {
 		}
 	};
 
+	const handleShare = () => {
+		if (navigator.share) {
+			navigator
+				.share({
+					title: "Alpha Crux: The Word Game",
+					text: "Check out this awesome word game!",
+					url: "https://mern-ing-the-midnight-oil.github.io/CruxWeb/",
+				})
+				.then(() => console.log("Successfully shared"))
+				.catch((error) => console.log("Error sharing", error));
+		} else {
+			alert(
+				"Sharing is not supported in this browser. Please copy the link manually."
+			);
+		}
+	};
+
 	return (
 		<div className="game-container">
 			{confettiActive && <Confetti origin={confettiOrigin} />}
@@ -222,16 +239,21 @@ const GameBoard = () => {
 						fontSize: "1rem",
 						color: "#333",
 					}}>
-					Scan to Visit
+					You are Here ^
 				</p>
 			</div>
 			<div className="button-group">
+				<button
+					className="share-button"
+					onClick={handleShare}>
+					Share this Game
+				</button>
 				<a
 					href="https://apps.apple.com/us/app/alpha-crux/id6641026804"
 					target="_blank"
 					rel="noopener noreferrer"
 					className="control-button">
-					Crux on iOS
+					Download for iOS
 				</a>
 				<a
 					href="https://www.linkedin.com/in/rhys-smoker/"
